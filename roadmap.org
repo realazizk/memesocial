@@ -1,0 +1,47 @@
+* DONE Setup stuff 
+  DEADLINE: <2016-08-25 Thu>
+  1) Install debian jessie using vagrant.
+  2) Make a new venv in my vagrant.
+  3) Install Flask, gunicorn, peewee and postgresql...
+  4) Make my app structure.
+  5) Download bootstrap, underscore js, jquery and fontawesome.
+  6) Setup my emacs to use jinja2 when I open my html files.
+
+* TODO Study the project
+  DEADLINE: <2016-08-28 Sun>
+  1) study the project on paper.
+  2) Study faisability.
+  3) do research on the libraries I'm using (fabricjs, underscorejs, jquery)
+  4) do the math.
+  5) do the math for (graph theory stuff) the following network.
+  6) write the big ideas on paper.
+  7) Do mockups.
+
+* TODO Make the database scheme
+  DEADLINE: <2016-08-29 Mon>
+  1) Structure my database scheme.
+  2) Write the design on papper.
+  3) Write the models code.
+
+* TODO Make views
+  DEADLINE: <2016-08-31 Wed>
+  1) write auth code.
+  2) write my api.
+
+* TODO Make the models
+  DEADLINE: <2016-09-03 Sat>
+  1) make the models based on my database scheme.
+
+* TODO Make the forms
+  DEADLINE: <2016-09-04 Sun>
+  1) make my forms
+
+* TODO Write simple layout
+  DEADLINE: <2016-09-10 Sat>
+  1) Write the simple website layout in bootstrap.
+  2) Add frontend to my api (ajax).
+
+* TODO Hack fabricjs
+  DEADLINE: <2016-09-25 Sun>
+  1) Make the stuff I wanna do, this is shady now.
+
