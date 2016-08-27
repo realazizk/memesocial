@@ -2,6 +2,8 @@
 from peewee import SqliteDatabase, Model,\
     PrimaryKeyField, FixedCharField, ForeignKeyField,\
     BooleanField, TextField, DateTimeField
+from passlib.apps import custom_app_context as pwd_context
+
 
 __author__ = "Mohamed Aziz Knani"
 
@@ -25,26 +27,34 @@ class Language(BaseModel):
 
 class User(BaseModel):
     id = PrimaryKeyField()
-    username = FixedCharField(100)
+    username = FixedCharField(100, unique=True)
     password = FixedCharField(100)
-    imageProfile = FixedCharField(250)
-    coverProfile = FixedCharField(250)
-    email = FixedCharField(100)
-    langid = ForeignKeyField(Language, related_name='id')
+    imageProfile = FixedCharField(250, null=True)
+    coverProfile = FixedCharField(250, null=True)
+    email = FixedCharField(100, null=True)
+    langid = ForeignKeyField(Language, to_field='id', null=True)
     active = BooleanField()
     online = BooleanField()
+
+    @staticmethod
+    def hash_password(password):
+        return pwd_context.encrypt(password)
+
+    def verify_password(self, password):
+        return pwd_context.verify(password, self.password)
 
 
 class Block(BaseModel):
     id = PrimaryKeyField()
-    user = ForeignKeyField(User, related_name='id')
-    blockedUser = ForeignKeyField(User, related_name='id')
+    user = ForeignKeyField(User, to_field='id', related_name='user')
+    blockedUser = ForeignKeyField(
+        User, to_field='id', related_name='blocked_user')
 
 
 class Image(BaseModel):
     id = PrimaryKeyField()
     url = FixedCharField(250)
-    owner = ForeignKeyField(User, related_name='id')
+    owner = ForeignKeyField(User, to_field='id')
     description = TextField()
     date = DateTimeField()
 
@@ -53,24 +63,28 @@ class Comment(BaseModel):
     id = PrimaryKeyField()
     body = TextField()
     date = DateTimeField()
-    imageId = ForeignKeyField(Image, related_name='id')
+    imageId = ForeignKeyField(Image, to_field='id')
 
 
 class Connection(BaseModel):
     id = PrimaryKeyField()
     date = DateTimeField()
-    userId = ForeignKeyField(User, related_name='id')
+    userId = ForeignKeyField(User, to_field='id')
     ip = FixedCharField(20)
     useragent = FixedCharField(200)
 
 
 class FollowerRelation(BaseModel):
     id = PrimaryKeyField()
-    follower = ForeignKeyField(User, related_name='id')
-    leader = ForeignKeyField(User, related_name='id')
+    follower = ForeignKeyField(User, to_field='id', related_name='follower')
+    leader = ForeignKeyField(User, to_field='id', related_name='leader')
 
 
 class Heart(BaseModel):
     id = PrimaryKeyField()
-    imageId = ForeignKeyField(Image, related_name='id')
-    userId = ForeignKeyField(User, related_name='id')
+    imageId = ForeignKeyField(Image, to_field='id')
+    userId = ForeignKeyField(User, to_field='id')
+
+
+all_tables = [Language, User, Block, Image,
+              Comment, Connection, FollowerRelation, Heart]

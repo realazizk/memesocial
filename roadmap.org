@@ -17,7 +17,7 @@
   6) write the big ideas on paper.
   7) Do mockups.
 
-* TODO Make the database scheme
+* DONE Make the database scheme
   DEADLINE: <2016-08-29 Mon>
   1) Structure my database scheme.
   2) Write the design on papper.
@@ -31,11 +31,11 @@
 * TODO Make the models
   DEADLINE: <2016-09-03 Sat>
   1) make the models based on my database scheme.
-
+    
 * TODO Make the forms
   DEADLINE: <2016-09-04 Sun>
   1) make my forms
-
+     
 * TODO Write simple layout
   DEADLINE: <2016-09-10 Sat>
   1) Write the simple website layout in bootstrap.
