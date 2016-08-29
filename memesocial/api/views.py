@@ -82,7 +82,7 @@ def login():
                 'username': user.username,
                 'id': user.id
             })
-            return 'ALL GOOD BUDDY'
+            return (jsonify({'success': 'Logged in succefully'}), 200)
         else:
             err = 'password'
     return (jsonify(
@@ -100,7 +100,7 @@ def login():
 @login_required
 def logout():
     session["__invalidate__"] = True
-    return (jsonify({'success': True}), 422)
+    return (jsonify({'success': True}), 200)
 
 
 @api.route('/update_profile_image', methods=['POST'])
@@ -290,7 +290,6 @@ def unheart_it(contentid):
     if not bool(e.execute()):
         return (jsonify({'error': 'You sneaky bastard you did not even heart this content'}), 202)
     return (jsonify({'success': 'Nice you unhearted this content.'}), 200)
-
 
 
 @api.route('/news_feed')

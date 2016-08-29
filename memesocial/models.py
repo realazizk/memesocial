@@ -3,7 +3,7 @@ from peewee import SqliteDatabase, Model,\
     PrimaryKeyField, FixedCharField, ForeignKeyField,\
     BooleanField, TextField, DateTimeField
 from passlib.apps import custom_app_context as pwd_context
-
+from memesocial import config
 
 __author__ = "Mohamed Aziz Knani"
 
@@ -11,7 +11,7 @@ __doc__ = """
  My models file, please see database_design.erd
 """
 
-db = SqliteDatabase('my_app.db')
+db = SqliteDatabase(config.DATABASE)
 
 
 class BaseModel(Model):
