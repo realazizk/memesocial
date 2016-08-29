@@ -1,7 +1,17 @@
-from flask import Flask
+from flask import Flask, send_from_directory, url_for
+from models import db, all_tables
+
 
 app = Flask(__name__)
 app.config.from_object('memesocial.config')
+
+
+@app.route('/images/<filename>')
+def get_image(filename):
+    return send_from_directory(
+        app.config['UPLOAD_FOLDER'],
+        filename
+    )
 
 
 def doStuff():

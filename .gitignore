@@ -140,3 +140,5 @@ flycheck_*.el
 # vagrant
 .vagrant
 homemohamed/
+
+images/*

@@ -79,11 +79,19 @@ class FollowerRelation(BaseModel):
     follower = ForeignKeyField(User, to_field='id', related_name='follower')
     leader = ForeignKeyField(User, to_field='id', related_name='leader')
 
+    class Meta:
+        # only one direct relation exists between two users.
+        indexes = ((("follower", "leader"), True),)
+
 
 class Heart(BaseModel):
     id = PrimaryKeyField()
     imageId = ForeignKeyField(Image, to_field='id')
     userId = ForeignKeyField(User, to_field='id')
+
+    class Meta:
+        # a user can put only one heart on a certain image
+        indexes = ((("imageId", "userId"), True),)
 
 
 all_tables = [Language, User, Block, Image,
