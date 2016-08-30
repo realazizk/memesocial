@@ -1,6 +1,7 @@
+from __future__ import division
 from flask import Blueprint, request, abort, g, jsonify, session
 from itsdangerous import Serializer
-from ..models import User, FollowerRelation, Image, Heart
+from ..models import User, FollowerRelation, Image, Heart, Comment
 from peewee import IntegrityError, DoesNotExist
 from functools import wraps
 from memesocial import config, utils
@@ -38,7 +39,7 @@ def remove_if_invalid(response):
     if "__invalidate__" in session:
         response.delete_cookie('session')
         session.pop('userData', None)
-
+        session.pop('__invalidate__', None)
     return response
 
 
@@ -165,6 +166,32 @@ def unfollowLeader(leaderid):
     return (jsonify({'success': 'Unfollowed user succefully'}), 200)
 
 
+@api.route('/content/<int:cid>')
+def gcontent(cid):
+    # every one can see the content
+    try:
+        i = Image.get(Image.id == cid)
+    except DoesNotExist:
+        return (jsonify({'errors': [{'detail': 'Content does not exist'}]}), 422)
+    hearters = Heart.select().where(Heart.imageId == i.id)
+    commentors = Comment.select().where(Comment.imageId == i.id)
+    hs = []
+    cm = []
+    for hearter in hearters:
+        hs.append({
+            'username': hearter.userId.username,
+            'image_profile': hearter.userId.imageProfile,
+            'id': hearter.userId.id
+        })
+    for comm in commentors:
+        cm.append({
+            'username': comm.usrId.username,
+            'image_profile': comm.usrId.imageProfile,
+            'id': comm.usrId.id
+        })
+    return (jsonify({'success': [{'detail': 'Request made succefully', 'hearters': hs, 'commentors': cm}]}), 200)
+
+
 @api.route('/create_content', methods=['POST'])
 @login_required
 def createcontent():
@@ -174,12 +201,13 @@ def createcontent():
         filename = utils.save_file(
             utils.decode_image(imageFile)
         )
-        query = Image.insert(url=config.SITE_URL + '/images/' + filename,
-                             owner=g.user['id'], description=description,
-                             date=datetime.datetime.now())
-        if not bool(query.execute()):
+        img = Image(url=config.SITE_URL + '/images/' + filename,
+                    owner=g.user['id'], description=description,
+                    date=datetime.datetime.now())
+        if not bool(img.save()):
             return (jsonify({'errors': [{'detail': 'Could not upload image'}]}), 422)
-        return (jsonify({'success': [{'detail': 'Uploaded image succefully'}]}), 200)
+        return (jsonify({'success': [{'detail': 'Uploaded image succefully',
+                                      'contentid': img.id}]}), 200)
 
 
 # any logged user shall get the followers and leaders list
@@ -231,6 +259,29 @@ def user_info(userid):
         jsonify(data),
         200
     )
+
+
+@api.route('/comment', methods=['POST'])
+@login_required
+def comment_on_something():
+    contentid = request.json.get('content_id')
+    comment_content = request.json.get('comment_content')
+
+    if contentid and comment_content:
+        # if image exists, foreign key exception don't seem to work
+        query = Image.select().where(Image.id == contentid)
+        if query.exists():
+            Comment.insert(
+                body=comment_content,
+                date=datetime.datetime.now(),
+                usrId=g.user['id'],
+                imageId=contentid
+            ).execute()
+        else:
+            return (jsonify({'error': 'Content does not exist'}), 404)
+        return (jsonify({'success': 'Inserted comment succefully'}))
+    else:
+        return (jsonify({'errors': ['Please pass a contentid and comment content']}), 400)
 
 
 # anyone could get user data like users: photos username...
@@ -303,8 +354,51 @@ def get_news_feed():
 @api.route('/maybe_like')
 @login_required
 def suggest_leaders():
-    # so this will suggest some leaders, this will be a complexe algorithm with lots of number crunching
-    # So my idea is to build a network with a number n of layers (layers of user network)?
-    # I will call this algorithm Frank (FollowersRank)
-    # I will take a look at twitters tunkrank http://thenoisychannel.com/2009/01/13/a-twitter-analog-to-pagerank
-    pass
+    import json
+    # My dumb algorithm, for liklyhood calculations, this is very dumb and straitforward but it may work
+    # + This is processer heavy calculations that needs to be done in each request duh.
+
+    # MY formula for now is (the paper is in my drawer):
+    # L(x, y) = f(x, y) + CLS(x, y) + CFS(x, y) * 1 / 2.04
+
+    # get current followers/leaders list.
+    result = json.loads(rels(g.user['id'])[0].data)
+    followers = set(map(lambda x: x['id'], result['followers']))
+    # I only need leaders coz the user is interested by them lol
+    myNetwork = set(map(lambda x: x['id'], result['leaders']))
+
+    d = {}
+
+    for eachNode in myNetwork:
+        ldrs = set(map(lambda x: x['id'], json.loads(rels(eachNode)[0].data)['leaders']))
+        for eachLeader in ldrs:
+            if eachLeader in myNetwork or eachLeader == g.user['id']:
+                continue
+            x = 1
+            if eachLeader in followers:
+                x = 0.04
+
+            res = json.loads(rels(eachLeader)[0].data)
+            followers1 = set(map(lambda x: x['id'], res['followers']))
+            leaders1 = set(map(lambda x: x['id'], res['leaders']))
+
+            d[eachLeader] = (x + (len(followers1.intersection(myNetwork)) / len(followers1.union(followers))) + (len(leaders1.intersection(followers)) / len(leaders1.union(myNetwork)))) / 2.04
+
+    for eachNode in followers.difference(myNetwork):
+        if eachNode in d:
+            continue
+        # I'm in followers list duh
+        res = json.loads(rels(eachNode)[0].data)
+        followers1 = set(map(lambda x: x['id'], res['followers']))
+        leaders1 = set(map(lambda x: x['id'], res['leaders']))
+
+        d[eachNode] = (0.04 + (len(followers1.intersection(followers)) / len(followers1.union(followers))) + (len(leaders1.intersection(myNetwork)) / len(leaders1.union(myNetwork)))) / 2.04
+        print d[eachNode]
+
+    return jsonify(d)
+
+
+@api.route('/whoami')
+@login_required
+def whothefuckami():
+    return str(g.user['id'])
