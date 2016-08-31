@@ -346,9 +346,50 @@ def unheart_it(contentid):
 @api.route('/news_feed')
 @login_required
 def get_news_feed():
-    # get news feed, come up with some kind of algorithm/formula that depends on time, and users relation (how many hearts he gave his leader)
-    # and how many comments they share.
-    pass
+    import json
+    # my algorithm is based on the idea of facebook's edgerank described in edgerank.net
+    # I called this ContentRank or Crank for short
+
+    # I need to play with the numbers to see if this gives realistic scores?
+
+    # Crank(x, y) = (1/(tx+1)) * Affinity(Owner(x), y)
+    # Affinity(x, y) = (|| followers(x) intersection followers(y) || / 100) + (|| leaders(x) intersection leaders(y) || / 100) + (hearts(x, y)/10) + (hearts(y, x)/30)
+
+    start = int(request.args.get('start', '1'))
+    limit = int(request.args.get('limit', '10'))
+
+    # get posts of leaders from last couple of hours
+    leaders = FollowerRelation.select(FollowerRelation.leader).where(FollowerRelation.follower == g.user['id'])
+    posts = Image.select().where(Image.owner << leaders).offset(start - 1).limit(limit)
+    psts = []
+
+    result = json.loads(rels(g.user['id'])[0].data)
+    iFollowers = set(map(lambda x: x['id'], result['followers']))
+    iLeader = set(map(lambda x: x['id'], result['leaders']))
+
+    def hearts(x, y):
+        usrImgs = Image.select(Image.id).where(Image.owner == y)
+        return Heart.select().where(Heart.imageId << usrImgs).count()
+
+    for post in posts:
+        diff = datetime.datetime.now() - post.date
+        minutesElapsed = divmod(diff.days * 86400 + diff.seconds, 60)
+
+        result = json.loads(rels(post.owner.id)[0].data)
+        lFollower = set(map(lambda x: x['id'], result['followers']))
+        lLeader = set(map(lambda x: x['id'], result['leaders']))
+
+        psts.append({
+            'url': post.url,
+            'id': post.id,
+            'description': post.description,
+            'ouser': post.owner.username,
+            'oimg': post.owner.imageProfile,
+            'score': 0.1 + (1 / (minutesElapsed[0] + 1)) * (((len(iFollowers.intersection(lFollower)) / 100) + (len(iLeader.intersection(lLeader)) / 100)) + (hearts(g.user['id'], post.owner.id) / 10) + (hearts(post.owner.id, g.user['id']) / 30))
+        })
+
+    # nextData = Image.select().where(Image.owner << leaders).offset(start + limit - 1).limit(limit).count()
+    return (jsonify(psts), 200)
 
 
 @api.route('/maybe_like')
@@ -402,3 +443,9 @@ def suggest_leaders():
 @login_required
 def whothefuckami():
     return str(g.user['id'])
+
+
+@api.route('/search')
+def srch():
+    # this shall be search algorithm for autocompletion, this shall return users with limit
+    pass

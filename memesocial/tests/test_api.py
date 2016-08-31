@@ -187,6 +187,12 @@ def do_comment(client, contentId, commentContent):
     return response.status_code
 
 
+def do_heart(client, username, password, cid):
+    do_login(client, username=username, password=password)
+    heart_content(client, cid)
+    do_logout(client)
+
+
 def test_comment(client):
     register_user(client, 'mohamed', '123')
     register_user(client, 'gauss', 'motherfucker')
@@ -201,6 +207,12 @@ def test_comment(client):
 
     # test of comment on content that does not exist
     assert do_comment(client, 97, 'Fuck all you') == 404
+
+
+def do_content(client, username, password, imgName, desc):
+    do_login(client, username=username, password=password)
+    mk_content(client, imgName, desc)
+    do_logout(client)
 
 
 def test_network(client):
@@ -244,9 +256,52 @@ def test_network(client):
     assert json.loads(client.get('/api/maybe_like').data) == {u'4': 0.6127450980392157, u'5': 0.1830065359477124, u'6': 0.14215686274509803}
 
 
+def get_feed(client):
+    response = client.get(
+        '/api/news_feed'
+    )
+    return response.data
+
+
 def test_meme_feed(client):
     """
     Keyword Arguments:
     client -- the client callback function
     """
-    pass
+    register_user(client, 'mohamed', '123')
+    register_user(client, 'gauss', 'motherfucker')
+    register_user(client, 'euler', 'mathisCool')
+    register_user(client, 'unk', 'unk')
+    register_user(client, 'test', 'test')
+    register_user(client, 'gi', 'pi')
+
+    do_content(client, 'mohamed', '123', 'imgTest.jpg', 'My description')
+    do_heart(client, 'gauss', 'motherfucker', 1)
+
+    do_content(client, 'unk', 'unk', 'imgTest.jpg', 'My description')
+    do_heart(client, 'gauss', 'motherfucker', 2)
+
+    do_content(client, 'gauss', 'motherfucker', 'imgTest.jpg', 'My description')
+    do_heart(client, 'unk', 'unk', 3)
+
+    do_follow(client, 'gauss', 'motherfucker', 1)
+    do_follow(client, 'mohamed', '123', 2)
+    do_follow(client, 'mohamed', '123', 3)
+
+    do_follow(client, 'gauss', 'motherfucker', 4)
+
+    do_follow(client, 'euler', 'mathisCool', 2)
+    do_follow(client, 'euler', 'mathisCool', 1)
+    do_follow(client, 'gauss', 'motherfucker', 3)
+    
+    do_follow(client, 'gi', 'pi', 1)
+    do_follow(client, 'gi', 'pi', 3)
+    do_follow(client, 'gi', 'pi', 5)
+
+    do_follow(client, 'test', 'test', 1)
+
+    do_login(client, 'gauss', 'motherfucker')
+    l = json.loads(get_feed(client))
+    k, s = l[0]['score'], l[1]['score']
+    assert max(k, s) == 0.25333333333333335
+    assert min(k, s) == 0.23333333333333334
