@@ -63,6 +63,7 @@ class Comment(BaseModel):
     id = PrimaryKeyField()
     body = TextField()
     date = DateTimeField()
+    usrId = ForeignKeyField(User, to_field='id')
     imageId = ForeignKeyField(Image, to_field='id')
 
 

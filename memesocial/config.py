@@ -10,5 +10,6 @@ ALLOWED_EXTENSIONS = set(['png', 'jpg', 'jpeg', 'gif'])
 SITE_URL = 'http://localhost:1337'
 # XXX: FOR DEBUGGING
 DATABASE = 'application.db'
+PROFILE = True
 if environ.get('TESTING') == '1':
     DATABASE = tempfile.mkstemp()[1]
