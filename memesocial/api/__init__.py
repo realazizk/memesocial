@@ -1,2 +1,2 @@
 
-from views import api
+from views import api, g

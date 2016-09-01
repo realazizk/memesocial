@@ -1,13 +1,15 @@
 from __future__ import division
-from flask import Blueprint, request, abort, g, jsonify, session
+from flask import Blueprint, request, g, jsonify, session
 from itsdangerous import Serializer
 from ..models import User, FollowerRelation, Image, Heart, Comment
 from peewee import IntegrityError, DoesNotExist
 from functools import wraps
 from memesocial import config, utils
 import datetime
-from retcodes import SHORT_USERNAME, EMAIL_NOT_FOUND, USERNAME_NOT_FOUND,\
-    PASSWORD_NOT_FOUND, ALREADY_REGISTERED_USERNAME, USERNAME_AVAIL, WRONG_EMAIL
+from retcodes import USERNAME_NOT_FOUND, PASSWORD_NOT_FOUND, EMAIL_NOT_FOUND, WRONG_EMAIL,\
+    SHORT_USERNAME, ALREADY_REGISTERED_USERNAME, USERNAME_AVAIL, EMAIL_NON_VALID, ALREADY_REGISTERED_EMAIL,\
+    EMAIL_AVAIL
+
 
 __author__ = "Mohamed Aziz Knani"
 
@@ -78,6 +80,7 @@ def reg():
         # do something with user?
     except IntegrityError:
         return (jsonify({'errors': [{'detail': 'The username shall be unique'}]}), 422)
+
     return (jsonify({
         'success': 'Created user succefully'
     }), 200)
@@ -421,6 +424,21 @@ def valid_username(username):
         return (jsonify({'success': {'detail': 'The username is available', 'code': USERNAME_AVAIL}}), 200)
 
 
+@api.route('/valid_email/<email>')
+def valid_email(email):
+    # return if a email is not already taken.
+    from validate_email import validate_email
+
+    if not validate_email(email):
+        return (jsonify({'error': {'detail': 'The email is not valid',
+                                   'code': EMAIL_NON_VALID}}), 400)
+    query = User.select().where(User.email == email)
+    if query.exists():
+        return (jsonify({'error': {'detail': 'The email is associated to another user', 'code': ALREADY_REGISTERED_EMAIL}}), 400)
+    else:
+        return (jsonify({'success': {'detail': 'The email is available', 'code': EMAIL_AVAIL}}), 200)
+
+
 @api.route('/maybe_like')
 @login_required
 def suggest_leaders():
@@ -471,7 +489,7 @@ def suggest_leaders():
 @api.route('/whoami')
 @login_required
 def whothefuckami():
-    return str(g.user['id'])
+    return (str(g.user['id']), 200)
 
 
 @api.route('/search')
