@@ -6,6 +6,8 @@ from peewee import IntegrityError, DoesNotExist
 from functools import wraps
 from memesocial import config, utils
 import datetime
+from retcodes import SHORT_USERNAME, EMAIL_NOT_FOUND, USERNAME_NOT_FOUND,\
+    PASSWORD_NOT_FOUND, ALREADY_REGISTERED_USERNAME, USERNAME_AVAIL, WRONG_EMAIL
 
 __author__ = "Mohamed Aziz Knani"
 
@@ -50,15 +52,29 @@ def hello():
 
 @api.route('/register_user', methods=['POST'])
 def reg():
+    from validate_email import validate_email
+
     username = request.json.get('username')
     password = request.json.get('password')
-    # if didn't pass username and password
-    if username is None or password is None:
-        abort(400)
+    email = request.json.get('email')
+
+    if not username:
+        return (jsonify({'error': {'detail': 'Specify a username', 'code': USERNAME_NOT_FOUND}}), 400)
+    if not password:
+        return (jsonify({'error': {'detail': 'Specify a password', 'code': PASSWORD_NOT_FOUND}}), 400)
+    if not email:
+        return (jsonify({'error': {'detail': 'Specify an email', 'code': EMAIL_NOT_FOUND}}), 400)
 
     try:
+        # I don't trust the users though javascript the frontend part will take care of this
+        if not validate_email(email):
+            return (jsonify({'error': {'detail': 'Wrong email', 'code': WRONG_EMAIL}}), 400)
+
+        if valid_username(username)[1] == 400:
+            return valid_username(username)
+
         User.create(username=username, password=User.hash_password(
-            password), active=True, online=True)
+            password), active=True, online=True, email=email)
         # do something with user?
     except IntegrityError:
         return (jsonify({'errors': [{'detail': 'The username shall be unique'}]}), 422)
@@ -390,6 +406,19 @@ def get_news_feed():
 
     # nextData = Image.select().where(Image.owner << leaders).offset(start + limit - 1).limit(limit).count()
     return (jsonify(psts), 200)
+
+
+@api.route('/valid_username/<username>')
+def valid_username(username):
+    # return if a username is not already taken.
+    if len(username) <= 4:
+        return (jsonify({'error': {'detail': 'the username should be more than 4 caracters long',
+                                   'code': SHORT_USERNAME}}), 400)
+    query = User.select().where(User.username == username)
+    if query.exists():
+        return (jsonify({'error': {'detail': 'The username is already registerd', 'code': ALREADY_REGISTERED_USERNAME}}), 400)
+    else:
+        return jsonify({'success': {'detail': 'The username is available', 'code': USERNAME_AVAIL}})
 
 
 @api.route('/maybe_like')
