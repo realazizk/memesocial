@@ -1,0 +1,105 @@
+
+.wrapper {
+  background: url('https://hd.unsplash.com/photo-1465420961937-e0eba4dda519') no-repeat center center fixed; 
+  -webkit-background-size: cover;
+  -moz-background-size: cover;
+  -o-background-size: cover;
+  background-size: cover;
+}
+
+.navbar-custom {
+    background-color:hsla(120,30%,85%,0.2);;
+    color:#ffffff;
+    border-radius:0;
+}
+
+#mySlogan {
+    margin-top: 10px;
+}
+
+
+body {
+	background: none;
+}
+
+.row-centered {
+    text-align:center;
+}
+.col-centered {
+    display:inline-block;
+    float:none;
+    /* reset the text-align */
+    text-align:left;
+    /* inline-block space fix */
+    margin-right:-4px auto;
+}
+
+
+.center-block {
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+
+.btn-outline {
+    background-color: transparent;
+    color: inherit;
+    transition: all .1s;
+    background-image: none;
+    text-shadow: none;
+    border-width: 2px;
+    border-radius: 0px;
+}
+
+.btn-primary.btn-outline {
+    color: #fff;
+    border-color: #fff;
+}
+
+.btn-primary.btn-outline:hover{
+    color: #000;
+    background: #fff;
+}
+
+.registerGroup {
+    margin: 0 auto;
+}
+
+.myInp {
+  outline: none;
+  border: none !important;
+  -webkit-box-shadow: none !important;
+  -moz-box-shadow: none !important;
+  box-shadow: none !important;
+
+}
+
+/* Custom, iPhone Retina */ 
+@media only screen and (min-width : 320px) {
+
+}
+
+/* Extra Small Devices, Phones */ 
+@media only screen and (min-width : 480px) {
+    #actDiv {
+	margin-top: 2em;
+    }
+}
+
+/* Small Devices, Tablets */
+@media only screen and (min-width : 768px) {
+
+}
+
+/* Medium Devices, Desktops */
+@media only screen and (min-width : 992px) {
+    #actDiv {
+	margin-top: 10em;
+    }
+}
+
+/* Large Devices, Wide Screens */
+@media only screen and (min-width : 1200px) {
+
+}

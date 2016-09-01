@@ -1,0 +1,97 @@
+{% extends "base.jhtml" %}
+
+{% block body %}
+    <div class="container-fluid" ng-app="myApp" ng-controller="myController">
+	<div class="container">
+	    <div id="actDiv" class="row row-centered">
+		<div class="center-block">
+		    <img alt="" src="{{ url_for('static', filename='imgs/memesocial.png') }}"/>
+		</div>
+	    </div>
+	    
+	    <div ng-hide="hideIt" class="row row-centered" style="margin-top: 1em;">
+		<div class="center-block">
+		    <a ng-click="registerUser();" id="regButt" style="width: 20em;" class="btn btn-primary btn-outline">Register a new account</a>
+		</div>
+	    </div>
+	    
+	    <div id="myElem" ng-hide="!hideIt" class="row row-centered" style="margin-top: 1em;">
+		<div class="center-block">
+		    <div class="input-group registerGroup" style="border-bottom: 1px solid #dadaad">
+			<input ng-model="formData.username" style="border-radius: 0px;" type="text" class="form-control myInp" placeholder="Username" aria-describedby="basic-addon1">
+		    </div>
+		</div>
+		<div class="center-block">
+		    <div class="input-group registerGroup" style="border-bottom: 1px solid #dadaad">
+			<input ng-model="formData.email" style="border-radius: 0px;"  class="form-control myInp" type="email" placeholder="Email" aria-describedby="basic-addon1">
+		    </div>
+		</div>
+		<div class="center-block">
+		    <div class="input-group registerGroup" style="border-bottom: 1px solid #dadaad">
+			<input  ng-model="formData.password" style="border-radius: 0px;" class="form-control myInp" type="password" placeholder="Password" aria-describedby="basic-addon1">
+		    </div>
+		</div>
+	    </div>
+	    
+	    
+	    <div ng-hide="hideIt" class="row row-centered" style="margin-top: 1em;">
+		<div class="center-block">
+		    <a id="logButt" class="btn btn-primary btn-outline">Login</a>
+		</div>
+	    </div>
+
+	    <div ng-hide="!hideIt" ng-click="connectRest()" class="row row-centered" style="margin-top: 1em;">
+		<div class="center-block">
+		    <a id="rButt" class="btn btn-primary btn-outline">Register</a>
+		</div>
+	    </div>
+
+	    
+	</div>
+    </div>
+
+    <nav class="navbar navbar-custom navbar-fixed-bottom">
+	<div id="mySlogan" class="text-center">
+	    Built with <i class="fa fa-heart"   aria-hidden="true"></i> and <i class="fa fa-coffee"  aria-hidden="true"></i> by Mohamed Aziz Knani
+	</div>
+    </nav>
+
+    <script>
+     
+     $('#logButt').width($('#regButt').width());
+     $('#rButt').width($('#regButt').width());
+     $('.registerGroup').width($('#logButt').width() + $('#logButt').css('paddingLeft').replace('px', '') * 2 + 2);
+     var app = angular.module('myApp', ['ngAnimate', 'ngResource']);
+
+     app.controller('myController', function ($scope, $http, $log){
+	 $scope.hideIt = false;
+
+	 $scope.formData = {};
+	 
+	 $scope.registerUser = function () {
+	     $scope.hideIt = true;
+	     $('#myElem').addClass('animated fadeInDown');
+	
+	     $scope.connectRest = function () {
+		 $http.post('/api/register_user', {
+		     username: $scope.formData.username,
+		     password: $scope.formData.password,
+		     email   : $scope.formData.email
+		 }, {
+		     headers: { 'Content-Type': 'application/json'}
+		 })
+		      .success(function (data, status, header, config){
+			  $log.log(data);
+			  $log.log(status);
+		      })
+		      .error(function (data, status, header, config) {
+			  $log.log(data);
+			  $log.log(status);
+		      });
+	     };
+	 };
+	 
+     });
+     
+    </script>
+{% endblock %}
