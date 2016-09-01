@@ -17,15 +17,22 @@
 	    
 	    <div id="myElem" ng-hide="!hideIt" class="row row-centered" style="margin-top: 1em;">
 		<div class="center-block">
-		    <div class="input-group registerGroup" style="border-bottom: 1px solid #dadaad">
+		    <div class="form-group has-feedback registerGroup" style="border-bottom: 1px solid #dadaad">
 			<input ng-model="formData.username" style="border-radius: 0px;" type="text" class="form-control myInp" placeholder="Username" aria-describedby="basic-addon1">
+			<i ng-hide="!formData.username || userTruth" class="glyphicon glyphicon-ok form-control-feedback"></i>
+			<i ng-hide="!formData.username || !userTruth" class="glyphicon glyphicon-remove form-control-feedback"></i>
+			
 		    </div>
 		</div>
+
 		<div class="center-block">
-		    <div class="input-group registerGroup" style="border-bottom: 1px solid #dadaad">
+		    <div class="form-group has-feedback registerGroup" style="border-bottom: 1px solid #dadaad">
 			<input ng-model="formData.email" style="border-radius: 0px;"  class="form-control myInp" type="email" placeholder="Email" aria-describedby="basic-addon1">
+			<i ng-hide="!formData.email || emailTruth" class="glyphicon glyphicon-ok form-control-feedback"></i>
+			<i ng-hide="!formData.email || !emailTruth" class="glyphicon glyphicon-remove form-control-feedback"></i>
 		    </div>
 		</div>
+		
 		<div class="center-block">
 		    <div class="input-group registerGroup" style="border-bottom: 1px solid #dadaad">
 			<input  ng-model="formData.password" style="border-radius: 0px;" class="form-control myInp" type="password" placeholder="Password" aria-describedby="basic-addon1">
@@ -63,12 +70,48 @@
      $('.registerGroup').width($('#logButt').width() + $('#logButt').css('paddingLeft').replace('px', '') * 2 + 2);
      var app = angular.module('myApp', ['ngAnimate', 'ngResource']);
 
-     app.controller('myController', function ($scope, $http, $log){
+     app.controller('myController', function ($scope, $http, $log, $window){
+	 // the business logic very messy I know since I began writing this code after 2 hours of beginning angularjs
 	 $scope.hideIt = false;
 
 	 $scope.formData = {};
+
+	 $scope.userTruth = true;
+	 $scope.emailTruth = true;
+
+
+	 $http.get('/api/whoami')
+	      .success(function (data, status) {
+		  $window.location.href = '/dashboard';
+	      });
+	 
+	 $scope.$watchCollection('formData.username', function (username) {
+	     $http.get('/api/valid_username/'+username)
+		  .success(function (data, status, header, config){
+		      $log.log(data);
+		      $scope.userTruth = false;
+		  })
+		  .error(function (data, status, header, config){
+		      $log.log(data);
+		      $scope.userTruth = true;
+		  });
+	 });
+
+	 $scope.$watchCollection('formData.email', function (email) {
+	     $http.get('/api/valid_email/'+email)
+		  .success(function (data, status, header, config){
+		      $log.log(data);
+		      $scope.emailTruth = false;
+		  })
+		  .error(function (data, status, header, config){
+		      $log.log(data);
+		      $scope.emailTruth = true;
+		  });
+	 });
+
 	 
 	 $scope.registerUser = function () {
+	     
 	     $scope.hideIt = true;
 	     $('#myElem').addClass('animated fadeInDown');
 	
@@ -81,8 +124,17 @@
 		     headers: { 'Content-Type': 'application/json'}
 		 })
 		      .success(function (data, status, header, config){
-			  $log.log(data);
-			  $log.log(status);
+			  $http.post('/api/login', {
+			      username: $scope.formData.username,
+			      password: $scope.formData.password
+			  },{
+			      headers: { 'Content-Type': 'application/json'}
+			  })
+			       .success(function () {
+				   $window.location.href = '/dashboard';
+			       }) ;
+				   
+			       
 		      })
 		      .error(function (data, status, header, config) {
 			  $log.log(data);
