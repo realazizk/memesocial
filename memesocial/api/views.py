@@ -418,7 +418,7 @@ def valid_username(username):
     if query.exists():
         return (jsonify({'error': {'detail': 'The username is already registerd', 'code': ALREADY_REGISTERED_USERNAME}}), 400)
     else:
-        return jsonify({'success': {'detail': 'The username is available', 'code': USERNAME_AVAIL}})
+        return (jsonify({'success': {'detail': 'The username is available', 'code': USERNAME_AVAIL}}), 200)
 
 
 @api.route('/maybe_like')

@@ -24,7 +24,8 @@ def register_user(client, username, password):
         '/api/register_user',
         data=json.dumps({
             'username': username,
-            'password': password
+            'password': password,
+            'email': username + '@nobody.com'
         }),
         content_type='application/json'
     )
@@ -224,12 +225,12 @@ def test_network(client):
     register_user(client, 'mohamed', '123')
     register_user(client, 'gauss', 'motherfucker')
     register_user(client, 'euler', 'mathisCool')
-    register_user(client, 'unk', 'unk')
-    register_user(client, 'test', 'test')
-    register_user(client, 'gi', 'pi')
+    register_user(client, 'unke1', 'unke1')
+    register_user(client, 'test1', 'test1')
+    register_user(client, 'gigi1', 'pipi1')
     # this should not be in outside of the local network
-    register_user(client, 'Ha', 'pa')
-    register_user(client, 'Cha', 'pa')
+    register_user(client, 'HaaHa', 'papa')
+    register_user(client, 'Chacha', 'papa')
 
     # building a simple follow network
     do_follow(client, 'mohamed', '123', 2)
@@ -240,15 +241,15 @@ def test_network(client):
     do_follow(client, 'euler', 'mathisCool', 2)
     do_follow(client, 'euler', 'mathisCool', 1)
 
-    do_follow(client, 'gi', 'pi', 1)
-    do_follow(client, 'gi', 'pi', 3)
-    do_follow(client, 'gi', 'pi', 5)
+    do_follow(client, 'gigi1', 'pipi1', 1)
+    do_follow(client, 'gigi1', 'pipi1', 3)
+    do_follow(client, 'gigi1', 'pipi1', 5)
 
-    do_follow(client, 'test', 'test', 1)
+    do_follow(client, 'test1', 'test1', 1)
 
     # shall be outside of the network
-    do_follow(client, 'Ha', 'pa', 8)
-    do_follow(client, 'Cha', 'pa', 7)
+    do_follow(client, 'HaaHa', 'papa', 8)
+    do_follow(client, 'Chacha', 'papa', 7)
 
     do_login(client, username='mohamed', password='123')
 
@@ -271,18 +272,18 @@ def test_meme_feed(client):
     register_user(client, 'mohamed', '123')
     register_user(client, 'gauss', 'motherfucker')
     register_user(client, 'euler', 'mathisCool')
-    register_user(client, 'unk', 'unk')
-    register_user(client, 'test', 'test')
-    register_user(client, 'gi', 'pi')
+    register_user(client, 'unke1', 'unke1')
+    register_user(client, 'test1', 'test1')
+    register_user(client, 'gigi1', 'pipi1')
 
     do_content(client, 'mohamed', '123', 'imgTest.jpg', 'My description')
     do_heart(client, 'gauss', 'motherfucker', 1)
 
-    do_content(client, 'unk', 'unk', 'imgTest.jpg', 'My description')
+    do_content(client, 'unke1', 'unke1', 'imgTest.jpg', 'My description')
     do_heart(client, 'gauss', 'motherfucker', 2)
 
     do_content(client, 'gauss', 'motherfucker', 'imgTest.jpg', 'My description')
-    do_heart(client, 'unk', 'unk', 3)
+    do_heart(client, 'unke1', 'unke1', 3)
 
     do_follow(client, 'gauss', 'motherfucker', 1)
     do_follow(client, 'mohamed', '123', 2)
@@ -294,11 +295,11 @@ def test_meme_feed(client):
     do_follow(client, 'euler', 'mathisCool', 1)
     do_follow(client, 'gauss', 'motherfucker', 3)
     
-    do_follow(client, 'gi', 'pi', 1)
-    do_follow(client, 'gi', 'pi', 3)
-    do_follow(client, 'gi', 'pi', 5)
+    do_follow(client, 'gigi1', 'pipi1', 1)
+    do_follow(client, 'gigi1', 'pipi1', 3)
+    do_follow(client, 'gigi1', 'pipi1', 5)
 
-    do_follow(client, 'test', 'test', 1)
+    do_follow(client, 'test1', 'test1', 1)
 
     do_login(client, 'gauss', 'motherfucker')
     l = json.loads(get_feed(client))
