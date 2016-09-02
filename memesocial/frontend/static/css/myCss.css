@@ -1,10 +1,11 @@
 
 .wrapper {
-  background: url('https://hd.unsplash.com/photo-1465420961937-e0eba4dda519') no-repeat center center fixed; 
-  -webkit-background-size: cover;
-  -moz-background-size: cover;
-  -o-background-size: cover;
-  background-size: cover;
+    
+    background: url('https://hd.unsplash.com/photo-1468245856972-a0333f3f8293') no-repeat center center fixed; 
+    -webkit-background-size: cover;
+    -moz-background-size: cover;
+    -o-background-size: cover;
+    background-size: cover;
 }
 
 .navbar-custom {
@@ -52,6 +53,11 @@ body {
     border-radius: 0px;
 }
 
+.vcenter {
+    display: flex;
+    align-items: center;
+}
+
 .btn-primary.btn-outline {
     color: #fff;
     border-color: #fff;
@@ -73,6 +79,19 @@ body {
   -moz-box-shadow: none !important;
   box-shadow: none !important;
 
+}
+
+.well {
+    background: rgba(0,0,0,.5);
+    border: 0px;
+    margin-top: 10px;
+    margin-bottom: 10px;
+}
+
+.well p {
+    
+    margin-bottom: 0px;
+    color: #e8e4e4;
 }
 
 /* Custom, iPhone Retina */ 

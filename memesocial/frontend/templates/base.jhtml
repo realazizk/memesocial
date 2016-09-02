@@ -2,12 +2,16 @@
 
 <html class="wrapper">
     <head>
+	<title>{% block title %} MemeSocial {% endblock %}</title>
 	<link href="{{ url_for('static', filename='css/bootstrap.min.css') }}" rel="stylesheet"/>
 	<link href="{{ url_for('static', filename='css/bootstrap-theme.min.css') }}" rel="stylesheet"/>
 	<link href="{{ url_for('static', filename='css/myCss.css')}}" rel="stylesheet"/>
 	<link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.6.3/css/font-awesome.min.css" rel="stylesheet"/>
 	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.5.2/animate.css">
+	{% block head %}
 
+	{% endblock %}
+	
 	<meta name="viewport" content="width=device-width, initial-scale=1">
     </head>
     <body>

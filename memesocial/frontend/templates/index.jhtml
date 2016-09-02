@@ -6,42 +6,76 @@
 	    <div id="actDiv" class="row row-centered">
 		<div class="center-block">
 		    <img alt="" src="{{ url_for('static', filename='imgs/memesocial.png') }}"/>
+		    <p style="color: #efe0e0">A social network for sharing and creating memes.</p>
 		</div>
 	    </div>
 	    
-	    <div ng-hide="hideIt" class="row row-centered" style="margin-top: 1em;">
+	    <div ng-hide="hideIt || hideIt1" class="row row-centered" style="margin-top: 1em;">
 		<div class="center-block">
 		    <a ng-click="registerUser();" id="regButt" style="width: 20em;" class="btn btn-primary btn-outline">Register a new account</a>
 		</div>
 	    </div>
 	    
 	    <div id="myElem" ng-hide="!hideIt" class="row row-centered" style="margin-top: 1em;">
-		<div class="center-block">
-		    <div class="form-group has-feedback registerGroup" style="border-bottom: 1px solid #dadaad">
-			<input ng-model="formData.username" style="border-radius: 0px;" type="text" class="form-control myInp" placeholder="Username" aria-describedby="basic-addon1">
-			<i ng-hide="!formData.username || userTruth" class="glyphicon glyphicon-ok form-control-feedback"></i>
-			<i ng-hide="!formData.username || !userTruth" class="glyphicon glyphicon-remove form-control-feedback"></i>
-			
-		    </div>
-		</div>
 
-		<div class="center-block">
-		    <div class="form-group has-feedback registerGroup" style="border-bottom: 1px solid #dadaad">
-			<input ng-model="formData.email" style="border-radius: 0px;"  class="form-control myInp" type="email" placeholder="Email" aria-describedby="basic-addon1">
-			<i ng-hide="!formData.email || emailTruth" class="glyphicon glyphicon-ok form-control-feedback"></i>
-			<i ng-hide="!formData.email || !emailTruth" class="glyphicon glyphicon-remove form-control-feedback"></i>
+		<form ng-submit="connectRest()">
+		    <div class="center-block">
+			<div class="form-group has-feedback registerGroup" style="border-bottom: 1px solid #dadaad">
+			    <input ng-model="formData.username" style="border-radius: 0px;" type="text" class="form-control myInp" placeholder="Username" aria-describedby="basic-addon1">
+			    <i ng-hide="!formData.username || userTruth" class="glyphicon glyphicon-ok form-control-feedback"></i>
+			    <i ng-hide="!formData.username || !userTruth" class="glyphicon glyphicon-remove form-control-feedback"></i>
+			    
+			</div>
 		    </div>
-		</div>
+
+		    <div class="center-block">
+			<div class="form-group has-feedback registerGroup" style="border-bottom: 1px solid #dadaad">
+			    <input ng-model="formData.email" style="border-radius: 0px;"  class="form-control myInp" type="email" placeholder="Email" aria-describedby="basic-addon1">
+			    <i ng-hide="!formData.email || emailTruth" class="glyphicon glyphicon-ok form-control-feedback"></i>
+			    <i ng-hide="!formData.email || !emailTruth" class="glyphicon glyphicon-remove form-control-feedback"></i>
+			</div>
+		    </div>
+		    
+		    <div class="center-block">
+			<div class="input-group registerGroup" style="border-bottom: 1px solid #dadaad">
+			    <input  ng-model="formData.password" style="border-radius: 0px;" class="form-control myInp" type="password" placeholder="Password" aria-describedby="basic-addon1">
+			</div>
+		    </div>
+		    <input type="submit" style="position: absolute; left: -9999px"/>
+
+		</form>
 		
-		<div class="center-block">
-		    <div class="input-group registerGroup" style="border-bottom: 1px solid #dadaad">
-			<input  ng-model="formData.password" style="border-radius: 0px;" class="form-control myInp" type="password" placeholder="Password" aria-describedby="basic-addon1">
+	    </div>
+
+	    
+	    <div id="myElem1" ng-hide="!hideIt1" class="row row-centered" style="margin-top: 1em;">
+
+		<form ng-submit="logEvt()">
+		    <div class="center-block">
+			<div class="form-group has-feedback registerGroup" style="border-bottom: 1px solid #dadaad">
+			    <input ng-model="loginData.username" style="border-radius: 0px;" type="text" class="form-control myInp" placeholder="Username" aria-describedby="basic-addon1">
+			    
+			</div>
 		    </div>
+		    
+		    <div class="center-block">
+			<div class="input-group registerGroup" style="border-bottom: 1px solid #dadaad">
+			    <input  ng-model="loginData.password" style="border-radius: 0px;" class="form-control myInp" type="password" placeholder="Password" aria-describedby="basic-addon1">
+			</div>
+		    </div>
+		    
+		    <input type="submit" style="position: absolute; left: -9999px"/>
+		    
+		</form>
+	    </div>
+
+	    <div class="row row-centered" ng-if="message.truth">
+		<div class="center-block well" id="myWell">
+		    <p>{a message.data  a}</p>
 		</div>
 	    </div>
 	    
-	    
-	    <div ng-hide="hideIt" class="row row-centered" style="margin-top: 1em;">
+	    <div  id="myElem2" ng-hide="hideIt" class="row row-centered" ng-click="logEvt();" style="margin-top: 1em;">
 		<div class="center-block">
 		    <a id="logButt" class="btn btn-primary btn-outline">Login</a>
 		</div>
@@ -52,34 +86,46 @@
 		    <a id="rButt" class="btn btn-primary btn-outline">Register</a>
 		</div>
 	    </div>
-
 	    
-	</div>
+	</div>	
     </div>
 
+    
     <nav class="navbar navbar-custom navbar-fixed-bottom">
 	<div id="mySlogan" class="text-center">
-	    Built with <i class="fa fa-heart"   aria-hidden="true"></i> and <i class="fa fa-coffee"  aria-hidden="true"></i> by Mohamed Aziz Knani
+	    Built with <i class="fa fa-heart"   style="color: red" aria-hidden="true"></i> and tons of <i class="fa fa-coffee" style="color: #1f1b1b" aria-hidden="true"></i> by Mohamed Aziz Knani
 	</div>
     </nav>
 
     <script>
      
      $('#logButt').width($('#regButt').width());
+     $('#myWell').width($('#regButt').width());
      $('#rButt').width($('#regButt').width());
      $('.registerGroup').width($('#logButt').width() + $('#logButt').css('paddingLeft').replace('px', '') * 2 + 2);
      var app = angular.module('myApp', ['ngAnimate', 'ngResource']);
 
+     app.config(['$interpolateProvider', function($interpolateProvider) {
+	 $interpolateProvider.startSymbol('{a');
+	 $interpolateProvider.endSymbol('a}');
+     }]);
+     
      app.controller('myController', function ($scope, $http, $log, $window){
 	 // the business logic very messy I know since I began writing this code after 2 hours of beginning angularjs
 	 $scope.hideIt = false;
-
+	 $scope.hideIt1 = false;
+	 
 	 $scope.formData = {};
-
+	 $scope.loginData = {};
+	 
 	 $scope.userTruth = true;
 	 $scope.emailTruth = true;
 
+	 $scope.message = {
+	     truth: false
+	 };
 
+	 
 	 $http.get('/api/whoami')
 	      .success(function (data, status) {
 		  $window.location.href = '/dashboard';
@@ -109,6 +155,33 @@
 		  });
 	 });
 
+
+	 $scope.logEvt = function () {
+	     // if it's already true submit
+	     if ($scope.hideIt1) {
+		 $http.post('/api/login', {
+		     username: $scope.loginData.username,
+		     password: $scope.loginData.password
+		 },{
+		     headers: { 'Content-Type': 'application/json'}
+		 })
+		      .success(function () {
+			  $window.location.href = '/dashboard';
+		      })
+
+		      .error(function (data, status, headers, config) {
+			  $scope.message.truth = true;
+			  $scope.message.data = data.error.detail;
+			  $('#myElem2').css('margin-top', '0px');
+		      });
+		 
+	     }
+	     else {
+		 $('#myElem1').addClass('animated fadeInDown');
+		 $scope.hideIt1 = true;
+	     };
+	     
+	 };
 	 
 	 $scope.registerUser = function () {
 	     
@@ -137,8 +210,9 @@
 			       
 		      })
 		      .error(function (data, status, header, config) {
-			  $log.log(data);
-			  $log.log(status);
+			  $scope.message.truth = true;
+			  $scope.message.data = data.error.detail;
+			  $('#myElem2').css('margin-top', '0px');
 		      });
 	     };
 	 };

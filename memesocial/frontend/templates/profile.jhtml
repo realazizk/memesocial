@@ -1,0 +1,29 @@
+
+{% extends "content.jhtml" %}
+
+{% block head %}
+    <link href=" {{ url_for('static', filename='css/cssProfile.css') }}" rel="stylesheet"/>
+{% endblock %}
+
+{% block content %}
+
+    <div style="background-color: #7870cc" class="imgCover row myRow">
+	<div class="col-xs-3">
+	    <div class="imgProfile vcenter" style="background-image: url('https://avatars1.githubusercontent.com/u/8514622?v=3&s=460')"></div>
+	</div>
+
+	<div class="col-xs-6">
+	    
+	    dsqd
+	</div>
+
+	<div class="col-xs-3">
+	    sqd
+	    
+	</div>
+
+    </div>
+
+   
+
+{% endblock %}

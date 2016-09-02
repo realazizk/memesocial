@@ -46,6 +46,11 @@ def dashboard():
     return str(g.user['id'])
 
 
+@frontend.route('/profile/<userid>')
+def user_profile(userid):
+    return render_template('profile.jhtml', userid=userid)
+
+
 @frontend.route('/')
 def index():
     return render_template('index.jhtml')

@@ -254,7 +254,7 @@ def test_network(client):
     do_login(client, username='mohamed', password='123')
 
     # my tests for now
-    assert json.loads(client.get('/api/maybe_like').data) == {u'4': 0.6127450980392157, u'5': 0.1830065359477124, u'6': 0.14215686274509803}
+    assert json.loads(client.get('/api/maybe_like').data) == {u'4': 0.12254901960784313, u'5': 0.1830065359477124, u'6': 0.14215686274509803}
 
 
 def get_feed(client):
