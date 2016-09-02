@@ -2,13 +2,13 @@ from __future__ import division
 from flask import Blueprint, request, g, jsonify, session
 from itsdangerous import Serializer
 from ..models import User, FollowerRelation, Image, Heart, Comment
-from peewee import IntegrityError, DoesNotExist
+from peewee import IntegrityError, DoesNotExist, fn
 from functools import wraps
 from memesocial import config, utils
 import datetime
 from retcodes import USERNAME_NOT_FOUND, PASSWORD_NOT_FOUND, EMAIL_NOT_FOUND, WRONG_EMAIL,\
     SHORT_USERNAME, ALREADY_REGISTERED_USERNAME, USERNAME_AVAIL, EMAIL_NON_VALID, ALREADY_REGISTERED_EMAIL,\
-    EMAIL_AVAIL
+    EMAIL_AVAIL, USED_USERNAME, WRONG_LOGIN
 
 
 __author__ = "Mohamed Aziz Knani"
@@ -75,11 +75,15 @@ def reg():
         if valid_username(username)[1] == 400:
             return valid_username(username)
 
+        query = User.select().where(fn.Lower(User.username) == username.lower())
+        if query.exists():
+            return (jsonify({'error': {'detail': 'Someone already uses this email', 'code': USED_USERNAME}}), 400)
+
         User.create(username=username, password=User.hash_password(
             password), active=True, online=True, email=email)
         # do something with user?
     except IntegrityError:
-        return (jsonify({'errors': [{'detail': 'The username shall be unique'}]}), 422)
+        return (jsonify({'error': {'detail': 'Something wrong happend'}}), 422)
 
     return (jsonify({
         'success': 'Created user succefully'
@@ -91,7 +95,7 @@ def login():
     username = request.json.get('username')
     password = request.json.get('password')
     if username is None or password is None:
-        return (jsonify({'errors': [{'detail': 'Username and/or password is none'}]}), 422)
+        return (jsonify({'error': {'detail': 'Username and/or password is none', 'code': WRONG_LOGIN}}), 422)
     try:
         user = User.get(User.username == username)
     except DoesNotExist:
@@ -107,11 +111,10 @@ def login():
             err = 'password'
     return (jsonify(
         {
-            'errors': [
-                {
-                    'detail': 'The %s is incorrect' % err
-                }
-            ]
+            'error': {
+                'detail': 'The %s is incorrect' % err,
+                'code': WRONG_LOGIN
+            }
         }
     ), 400)
 
@@ -417,7 +420,7 @@ def valid_username(username):
     if len(username) <= 4:
         return (jsonify({'error': {'detail': 'the username should be more than 4 caracters long',
                                    'code': SHORT_USERNAME}}), 400)
-    query = User.select().where(User.username == username)
+    query = User.select().where(fn.Lower(User.username) == username.lower())
     if query.exists():
         return (jsonify({'error': {'detail': 'The username is already registerd', 'code': ALREADY_REGISTERED_USERNAME}}), 400)
     else:
@@ -462,7 +465,7 @@ def suggest_leaders():
         for eachLeader in ldrs:
             if eachLeader in myNetwork or eachLeader == g.user['id']:
                 continue
-            x = 1
+            x = 0
             if eachLeader in followers:
                 x = 0.04
 
@@ -495,4 +498,5 @@ def whothefuckami():
 @api.route('/search')
 def srch():
     # this shall be search algorithm for autocompletion, this shall return users with limit
+    # maybe install sphinx to get all the juice from server, I at most 100ms response time
     pass
