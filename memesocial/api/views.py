@@ -332,10 +332,10 @@ def user_posts(userid):
     }
     if nextData != 0:
         retData['next'] = utils.form_url(
-            (config.SITE_URL, request.path), {
-                'start': start + limit,
-                'limit': limit
-            }
+                ('', request.path), {
+                    'start': start + limit,
+                    'limit': limit
+                }
         )
     if not retData['data']:
         return (jsonify({'errors': [{'detail': 'No more Posts'}]}), 422)

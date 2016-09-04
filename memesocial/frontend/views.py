@@ -4,6 +4,8 @@ from functools import wraps
 import os
 from itsdangerous import Serializer
 from memesocial import config
+from memesocial.api import views as apiViews
+from json import loads
 
 
 frontend = Blueprint(
@@ -46,9 +48,10 @@ def dashboard():
     return str(g.user['id'])
 
 
-@frontend.route('/profile/<userid>')
+@frontend.route('/profile/<int:userid>')
 def user_profile(userid):
-    return render_template('profile.jhtml', userid=userid)
+    currUser = loads(apiViews.user_info(userid)[0].data)
+    return render_template('profile.jhtml', userid=userid, userData=currUser, isLogged=g.user is not None)
 
 
 @frontend.route('/')
