@@ -6,7 +6,7 @@
 	    <div id="actDiv" class="row row-centered">
 		<div class="center-block">
 		    <img alt="" src="{{ url_for('static', filename='imgs/memesocial.png') }}"/>
-		    <p style="color: #efe0e0">A social network for sharing and creating memes.</p>
+		    <p style="color: #efe0e0">A social network only for sharing and creating</p>
 		</div>
 	    </div>
 	    

@@ -122,3 +122,10 @@ body {
 @media only screen and (min-width : 1200px) {
 
 }
+
+.navbar-nav > li > a, .navbar-brand {
+    padding-top:7px !important; 
+    padding-bottom:0 !important;
+    height: 35px;
+}
+.navbar {min-height:35px !important;}

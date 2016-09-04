@@ -3,27 +3,129 @@
 
 {% block head %}
     <link href=" {{ url_for('static', filename='css/cssProfile.css') }}" rel="stylesheet"/>
+    <link href="https://fonts.googleapis.com/css?family=Fira+Sans" rel="stylesheet">
 {% endblock %}
 
 {% block content %}
 
-    <div style="background-color: #7870cc" class="imgCover row myRow">
-	<div class="col-xs-3">
-	    <div class="imgProfile vcenter" style="background-image: url('https://avatars1.githubusercontent.com/u/8514622?v=3&s=460')"></div>
-	</div>
+    <div id="duh" style="background-color: #45ce49" class="imgCover">
+	<div class="container">
+	    <div   class="row myRow affix" style="color: #fff">
+		
+		<div class="col-md-2">
+		    <div class="imgProfile" style="background-image: url('https://avatars1.githubusercontent.com/u/8514622?v=3&s=460')"></div>
+		</div>
 
-	<div class="col-xs-6">
-	    
-	    dsqd
-	</div>
+		<div class="col-md-6" style="margin-left: 10px;">
+		    <div class="username" style="font-size: 20px;
+						 margin-bottom: 10px;">
+			@moonflock
+		    </div>
+		    <div class="bio">
+			I'm a student and a programmer by trade, in my free time I like to listen to some good music and make cool things with computers, I'm also the creator of memesocial.
+		    </div>
+		    
+		</div>
 
-	<div class="col-xs-3">
-	    sqd
-	    
-	</div>
+		<div class="col-md-4">
+		    <div id="numbers">
+			<div class="foll">
+			    
+			    <div class="fnum">
+				140
+			    </div>
 
+			    <div class="ftext">
+				Followers
+			    </div>
+			</div>
+			
+			<div class="foll">
+			    <div class="fnum">
+				67
+			    </div>
+
+			    <div class="ftext">
+				Leaders
+			    </div>
+
+			</div>
+		    </div>
+		    <a  id="followButt" style="width: 20em;" class="btn btn-primary btn-outline">Follow</a>
+		</div>
+
+	    </div>
+	</div>
     </div>
 
-   
+    
+    <div id="myContent" class="container-fluid">
+
+	<div id="space" style="margin-top: 100px;"></div>
+	
+	<div class="row row-centered">
+	    <div class="center-block">
+		<div class="card">
+		    <div class="card-content">
+			<p>Cards for display in portfolio style material design by Google.</p>
+                    </div>
+                    
+		    <div class="card-image">
+			<img class="img-responsive" src="http://memesvault.com/wp-content/uploads/Funny-Meme-6.jpg">
+
+                    </div>
+                    
+                    <div class="card-content">
+			<p>Cards for display in portfolio style material design by Google.</p>
+                    </div>
+                    
+                    <div class="card-action">
+			<a href="#" target="new_blank">Link</a>
+			<a href="#" target="new_blank">Link</a>
+			<a href="#" target="new_blank">Link</a>
+			<a href="#" target="new_blank">Link</a>
+			<a href="#" target="new_blank">Link</a>
+                    </div>
+		</div>
+	    </div>
+	</div>
+
+	<div class="row row-centered">
+	    <div class="center-block">
+		<div class="card">
+		    <div class="card-content">
+			<p>Cards for display in portfolio style material design by Google.</p>
+                    </div>
+                    
+                    <div class="card-image">
+			<img class="img-responsive" src="http://brostrick-prod.s3.amazonaws.com/wp-content/uploads/2015/06/9-nfl-memes.png">
+                    </div>
+                    
+                    <div class="card-content">
+			<p>Cards for display in portfolio style material design by Google.</p>
+                    </div>
+                    
+                    <div class="card-action">
+			<a href="#" target="new_blank">Link</a>
+			<a href="#" target="new_blank">Link</a>
+			<a href="#" target="new_blank">Link</a>
+			<a href="#" target="new_blank">Link</a>
+			<a href="#" target="new_blank">Link</a>
+                    </div>
+		</div>
+	    </div>
+	</div>
+
+
+	
+    </div>
+    <script src="https://cdn.jsdelivr.net/jquery.stellar/0.6.2/jquery.stellar.min.js"></script>
+    
+    <script>
+     a = $('.myRow');
+     a.css('padding-top', ($('.imgCover').height()/2) - (a.height()/2));
+     
+    </script>
+    
 
 {% endblock %}

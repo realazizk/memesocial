@@ -3,22 +3,25 @@
 <html class="wrapper">
     <head>
 	<title>{% block title %} MemeSocial {% endblock %}</title>
+	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<link href="{{ url_for('static', filename='css/bootstrap.min.css') }}" rel="stylesheet"/>
 	<link href="{{ url_for('static', filename='css/bootstrap-theme.min.css') }}" rel="stylesheet"/>
 	<link href="{{ url_for('static', filename='css/myCss.css')}}" rel="stylesheet"/>
 	<link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.6.3/css/font-awesome.min.css" rel="stylesheet"/>
 	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.5.2/animate.css">
-	{% block head %}
+	<meta http-equiv="Content-Type" content="text/html;charset=UTF-8" />
 
+	{% block head %}
+	    
 	{% endblock %}
 	
-	<meta name="viewport" content="width=device-width, initial-scale=1">
     </head>
     <body>
 	<script   src="https://code.jquery.com/jquery-2.2.4.min.js"   integrity="sha256-BbhdlvQf/xTY9gja0Dq3HiwQF8LaCRTXxZKRutelT44="   crossorigin="anonymous"></script>
 	<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.8/angular.min.js"></script>
 	<script src="https://code.angularjs.org/1.5.8/angular-animate.min.js"></script>
 	<script src="https://code.angularjs.org/1.5.8/angular-resource.min.js"></script>
+	<script src="https://code.angularjs.org/1.5.8/angular-route.min.js"></script>
 	{% block body %}
 
 	{% endblock %}
