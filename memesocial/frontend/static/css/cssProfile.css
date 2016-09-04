@@ -4,7 +4,7 @@ body, html {
     background: #f6f5f5;
 }
 body {
-    font-family: 'Fira Sans', sans-serif !important;
+    font-family: 'Open Sans', sans-serif !important;
 }
 
 .wrapper {
@@ -166,11 +166,28 @@ input::-webkit-input-placeholder {
   background-clip: padding-box;
   box-sizing: border-box;
   background-color: #fff;
+  text-align: left;
 }
 .card .card-content p {
   margin: 0;
   color: inherit;
 }
+
+.card .card-header {
+  padding: 4px;
+  border-radius: 0 0 2px 2px;
+  background-clip: padding-box;
+  box-sizing: border-box;
+  background-color: #fff;
+  text-align: left;
+  
+}
+.card .card-header p {
+  margin: 0;
+  color: inherit;
+}
+
+
 .card .card-content span.card-title {
   line-height: 48px;
 }
@@ -197,7 +214,33 @@ input::-webkit-input-placeholder {
     box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19)
 }
 
-.imageContent {
-
-    
+.profileThumb {
+    height: 40px;
+    width: 40px;
+    border-radius: 50%;
+    background-repeat: no-repeat;
+    background-position: center center;
+    background-size: cover;
+    position: relative;
+    left: 10px;
+    display: inline-block;
 }
+
+.hearty {
+    width: 100px;
+    height: 100px;
+    background: url("https://cssanimation.rocks/images/posts/steps/heart.png") no-repeat;
+    background-position: 0 0;
+    cursor: pointer;
+    transition: background-position 1s steps(28);
+    transition-duration: 0s;
+    position: absolute;
+    right: 0;
+    top: 50%;
+    margin-top: -30px;
+}
+.hearty.is-active {
+  transition-duration: 1s;
+  background-position: -2800px 0;
+}
+

@@ -32,4 +32,6 @@
 	
     {% endblock %}
 
+    <script src="{{ url_for('static', filename='js/ng-infinite-scroll.min.js') }}"></script>
+    
 {% endblock %}
