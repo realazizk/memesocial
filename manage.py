@@ -3,7 +3,7 @@ import memesocial
 
 
 manager = Manager(memesocial.app)
-manager.add_command("runserver", Server(host="0.0.0.0", port=1337))
+manager.add_command("runserver", Server(host="0.0.0.0", port=1337, threaded=True))
 
 
 @manager.command

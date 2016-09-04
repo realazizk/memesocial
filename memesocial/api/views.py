@@ -316,7 +316,7 @@ def user_posts(userid):
 
     # so this gonna return user data + next page (if it exists)
     # TODO: get number of hearts and check if user is logged in if yes check if he already liked it, also get number of comments
-    bruttoData = Image.select().where(Image.owner == userid).order_by(Image.id).offset(start - 1).limit(limit)
+    bruttoData = Image.select().where(Image.owner == userid).order_by(Image.id.desc()).offset(start - 1).limit(limit)
     userContent = []
     for b in bruttoData:
         userContent.append({
