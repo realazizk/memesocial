@@ -1,187 +1,141 @@
 
 {% extends "content.jhtml" %}
-
 {% block head %}
     <link href=" {{ url_for('static', filename='css/cssProfile.css') }}" rel="stylesheet"/>
     <link href="https://fonts.googleapis.com/css?family=Open+Sans" rel="stylesheet">
 {% endblock %}
-
 {% block content %}
-    
     <div id="duh" style="background-color: #45ce49" class="imgCover">
-	<div class="container">
-	    <div   class="row myRow affix" style="color: #fff">
-		
-		<div class="col-md-2">
-		    <div class="imgProfile" style="background-image: url('https://avatars1.githubusercontent.com/u/8514622?v=3&s=460')"></div>
-		</div>
-
-		<div class="col-md-6" style="margin-left: 10px;">
-		    <div class="username" style="font-size: 20px;
-						 margin-bottom: 10px;">
-			@moonflock
-		    </div>
-		    <div class="bio">
-			I'm a student and a programmer by trade, in my free time I like to listen to some good music and make cool things with computers, I'm also the creator of memesocial.
-		    </div>
-		    
-		</div>
-
-		<div class="col-md-4">
-		    <div id="numbers">
-			<div class="foll">
-			    
-			    <div class="fnum">
-				140
-			    </div>
-
-			    <div class="ftext">
-				Followers
-			    </div>
-			</div>
-			
-			<div class="foll">
-			    <div class="fnum">
-				67
-			    </div>
-
-			    <div class="ftext">
-				Leaders
-			    </div>
-
+        <div class="container">
+            <div class="row myRow" style="color: #fff">
+                <div class="col-xs-2">
+		    <div class="row">
+			<div class="col-xs-12">
+			    <div class="circle-avatar" style="background-image: url('https://avatars1.githubusercontent.com/u/8514622?v=3&s=460')"></div>
 			</div>
 		    </div>
-		    <a  id="followButt" style="width: 20em;" class="btn btn-primary btn-outline">Follow</a>
-		</div>
+                </div>
+                <div class="col-xs-7" style="margin-left: 10px;">
+		    <div class="row">
+			<div class="col-xs-12">
+			    <div class="username" style="font-size: 20px;
+							 margin-bottom: 10px;">
+				@{{ userData.username }}
+			    </div>
+			</div>
+			<div class="col-xs-12">
+			    <div class="bio">
+				{{ userData.bio }} I'm a student and a programmer by trade, in my free time I like to listen to some good music and make cool things with computers, I'm also the creator of memesocial.
+			    </div>
+			</div>
 
-	    </div>
-	</div>
+		    </div>
+                </div>
+                <div class="col-xs-3">
+		    <div class="row">
+			<div class="col-xs-12">
+			    <div class="row" style="text-align: center">
+				<div class="col-xs-4" style="font-size: 1.5em">33</div>
+				<div class="col-xs-4 col-xs-offset-4" style="font-size: 1.5em">34</div>
+			    </div>
+			    <div class="row" style="text-align: center"> 
+				<div class="col-xs-4">Followers</div>
+				<div class="col-xs-4 col-xs-offset-4">Leaders</div>
+
+			    </div>
+			    <div class="row">
+				<div class="col-xs-12">
+				    <a  id="followButt" class="btn btn-block btn-primary btn-outline">Follow</a>
+				</div>
+			    </div>
+			</div>
+		    </div>
+                </div>
+            </div>
+        </div>
     </div>
 
-    
-    <div  ng-app='myApp' ng-controller='DemoController' id="myContent" class="container-fluid">
-
-	<div id="space" style="margin-top: 50px;"></div>
-	
-	<div class="row row-centered">
-	    <div class="center-block">
-		<div class="card">
-		    <div class="card-header">
-			<div class="row">
-			    <div class="col-xs-2">
-				<div class="profileThumb" style="background-image: url('http://localhost:1337/images/imgTest.jpg?thumbnail')"></div>
-			    </div>
-			    <div class="col-xs-6">
-				<a href="">moonflock</a>
-			    </div>
-
-			    <div class="col-xs-4">
-				<div class="hearty"></div>
-			    </div>
-			    
-			    <div class="col-xs-6">
-				Toadays date hahaha
-			    </div>
-			</div>
+    <div  ng-app='myApp' ng-controller='myController' id="myContent" class="container-fluid">
+        <div id="space" style="margin-top: 50px;"></div>
+        <div infinite-scroll='meme.nextPage()' infinite-scroll-disabled='meme.busy' infinite-scroll-distance='1'>
+            <div ng-repeat='item in meme.items'>
+                <div class="row row-centered">
+                    <div class="center-block">
+                        <div class="card">
+                            <div class="card-header">
+                                <div class="row">
+                                    <div class="col-xs-2">
+                                        <div class="profileThumb" style="background-image: url('http://localhost:1337/images/imgTest.jpg?thumbnail')"></div>
+                                    </div>
+                                    <div class="col-xs-6">
+                                        <a href="">moonflock</a>
+                                    </div>
+                                    <div class="col-xs-4">
+                                        <div class="hearty"></div>
+                                    </div>
+                                    <div class="col-xs-6">
+                                        Toadays date hahaha
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="card-image">
+                                <img class="img-responsive" src="http://memesvault.com/wp-content/uploads/Funny-Meme-6.jpg">
+                            </div>
+                            <div class="card-content">
+                                <p>{a item.description  a}</p>
+                            </div>
+                            <div class="card-action">
+                                <a href="#">Hearts <span class="badge">42</span></a>
+                                <a href="#">Comments <span class="badge">17</span></a>
+                            </div>
+                        </div>
                     </div>
-                    
-		    <div class="card-image">
-			<img class="img-responsive" src="http://memesvault.com/wp-content/uploads/Funny-Meme-6.jpg">
-
-                    </div>
-                    
-                    <div class="card-content">
-			<p>Velit, scelerisque in dictum non, consectetur a erat nam at lectus urna duis convallis convallis tellus, id interdum velit laoreet id donec ultrices tincidunt arcu, non sodales neque sodales? Nulla porttitor massa id neque aliquam vestibulum morbi blandit cursus risus, at ultrices mi tempus imperdiet. Nam at lectus urna duis convallis convallis tellus, id interdum velit laoreet id donec ultrices tincidunt arcu, non sodales neque sodales! Bibendum at varius vel, pharetra vel turpis nunc eget lorem dolor, sed viverra ipsum nunc aliquet bibendum enim, facilisis. Enim neque, volutpat ac tincidunt vitae, semper quis lectus nulla at volutpat diam ut venenatis!</p>
-                    </div>
-                    
-                    <div class="card-action">
-			<a href="#">Hearts <span class="badge">42</span></a>
-			<a href="#">Comments <span class="badge">17</span></a>
-                    </div>
-		</div>
-	    </div>
-	</div>
-
-	<div class="row row-centered">
-	    <div class="center-block">
-		<div class="card">
-		    <div class="card-content">
-			<p>Cards for display in portfolio style material design by Google.</p>
-                    </div>
-                    
-                    <div class="card-image">
-			<img class="img-responsive" src="http://brostrick-prod.s3.amazonaws.com/wp-content/uploads/2015/06/9-nfl-memes.png">
-                    </div>
-                    
-                    <div class="card-content">
-			<p>Cards for display in portfolio style material design by Google.</p>
-                    </div>
-                    
-                    <div class="card-action">
-			<a href="#" target="new_blank">Link</a>
-			<a href="#" target="new_blank">Link</a>
-			<a href="#" target="new_blank">Link</a>
-			<a href="#" target="new_blank">Link</a>
-			<a href="#" target="new_blank">Link</a>
-                    </div>
-		</div>
-	    </div>
-	</div>
-
-
-	
+                </div>
+                <div style='clear: both;'></div>
+                <div ng-show='meme.busy'>Loading data...</div>
+            </div>
+        </div>
     </div>
     <script src="https://cdn.jsdelivr.net/jquery.stellar/0.6.2/jquery.stellar.min.js"></script>
-    
     <script>
      a = $('.myRow');
      a.css('padding-top', ($('.imgCover').height()/2) - (a.height()/2));
-
      $(function() {
-	 $(".hearty").on("click", function() {
-	     $(this).toggleClass("is-active");
-	 });
+         $(".hearty").on("click", function() {
+             $(this).toggleClass("is-active");
+         });
      });
-
-
-
      var myApp = angular.module('myApp', ['infinite-scroll']);
-
-
-     myApp.controller('DemoController', function($scope, MemeSocial) {
-	 // $scope.reddit = new Reddit();
-
-	 $scope.meme = new Meme();
-	 });
-	 
+     myApp.controller('myController', function($scope, MemeSocial) {
+         // $scope.reddit = new Reddit();
+         $scope.meme = new MemeSocial();
      });
-
+     myApp.config(['$interpolateProvider', function($interpolateProvider) {
+         $interpolateProvider.startSymbol('{a');
+         $interpolateProvider.endSymbol('a}');
+     }]);
      myApp.factory('MemeSocial', function($http) {
-	 var Meme = function() {
-	     this.items = [];
-	     this.busy = false;
-	     this.after = '';
-	     this.nextUrl = "http://localhost:1337/api/user_posts/1";
-	 };
-
-	 Meme.prototype.nextPage = function() {
-	     if (this.busy) return;
-	     this.busy = true;
-
-	     var url = this.nextUrl;
-	     $http.get(url).success(function(data) {
-		 this.nextUrl = data.next;
-		 var items = data.data;
-		 for (var i = 0; i < items.length; i++) {
-		     this.items.push(items[i]);
-		 }
-	     }.bind(this));
-	 };
-
-	 return Meme;
+         var Meme = function() {
+             this.items = [];
+             this.busy = false;
+             this.after = '';
+             this.nextUrl = "/api/user_posts/{{ userid}}?limit=2";
+         };
+         Meme.prototype.nextPage = function() {
+             if (this.busy) return;
+             this.busy = true;
+             var url = this.nextUrl;
+             $http.get(url).success(function(data) {
+                 this.nextUrl = data.next;
+                 console.log(this.nextUrl);
+                 var items = data.data;
+                 for (var i = 0; i < items.length; i++) {
+                     this.items.push(items[i]);
+                 }
+                 this.busy = false;
+             }.bind(this));
+         };
+         return Meme;
      });
-     
     </script>
-    
-
 {% endblock %}

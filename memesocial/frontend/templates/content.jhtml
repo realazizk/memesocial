@@ -23,7 +23,9 @@
 
 	    
 	    <div class="navbar-right">
-		<button style="background: #fff;" id="loginButt" type="button" class="btn btn-default">Login</button>
+		{% if not isLogged %}
+		    <button style="background: #fff;" id="loginButt" type="button" class="btn btn-default">Login</button>
+		{% endif %}
 	    </div>
 	</div>
     </nav>
