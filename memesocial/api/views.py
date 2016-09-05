@@ -8,7 +8,7 @@ from memesocial import config, utils
 import datetime
 from retcodes import USERNAME_NOT_FOUND, PASSWORD_NOT_FOUND, EMAIL_NOT_FOUND, WRONG_EMAIL,\
     SHORT_USERNAME, ALREADY_REGISTERED_USERNAME, USERNAME_AVAIL, EMAIL_NON_VALID, ALREADY_REGISTERED_EMAIL,\
-    EMAIL_AVAIL, USED_USERNAME, WRONG_LOGIN
+    EMAIL_AVAIL, USED_USERNAME, WRONG_LOGIN, BIO_NOT_UPDATED, BIO_UPDATED
 
 
 __author__ = "Mohamed Aziz Knani"
@@ -147,7 +147,6 @@ def update_profile_image():
 def update_cover_color(color):
     from memesocial.api import colorcodes
     colorName = colorcodes.theReverseColors.get('#'+color.upper(), False)
-    print colorName
     if colorName:
         query = User.update(coverProfile=colorName)\
                     .where(User.id == g.user['id'])
@@ -236,7 +235,6 @@ def createcontent():
 
 # any logged user shall get the followers and leaders list
 @api.route('/relations/<int:userid>')
-@login_required
 def rels(userid):
     # the users that are following him
     followers = FollowerRelation.select(FollowerRelation.follower).where(
@@ -283,7 +281,7 @@ def user_info(userid):
     data['cover_image'] = someKindOfUser.coverProfile
     data['id'] = someKindOfUser.id
     data['color'] = theColors[someKindOfUser.coverProfile]
-
+    data['bio'] = someKindOfUser.bio
     return (
         jsonify(data),
         200
@@ -372,6 +370,17 @@ def unheart_it(contentid):
         return (jsonify({'error': 'You sneaky bastard you did not even heart this content'}), 202)
     return (jsonify({'success': 'Nice you unhearted this content.'}), 200)
 
+
+@api.route('/update_bio', methods=['POST'])
+@login_required
+def update_bio():
+    bio = request.json.get('bio', False)
+    if bio:
+        q = User.update(bio=bio).where(User.id == g.user['id'])
+        if q.execute():
+            return (jsonify({'success': {'detail': 'Updated the bio', 'code': BIO_UPDATED}}), 200)
+        else:
+            return (jsonify({'error': {'detail': 'Did not update the bio', 'code': BIO_NOT_UPDATED}}), 200)
 
 @api.route('/news_feed')
 @login_required
@@ -492,7 +501,6 @@ def suggest_leaders():
         leaders1 = set(map(lambda x: x['id'], res['leaders']))
 
         d[eachNode] = (0.04 + (len(followers1.intersection(followers)) / len(followers1.union(followers))) + (len(leaders1.intersection(myNetwork)) / len(leaders1.union(myNetwork)))) / 2.04
-        print d[eachNode]
 
     return jsonify(d)
 

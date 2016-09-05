@@ -58,9 +58,20 @@ def user_profile(userid):
         il = g.user is not None
     except:
         il = False
+    myPage = True if il and g.user.get('id') == userid else False
+    if myPage:
+        isFollowing = False
+    elif il:
+        isFollowing = False
+        for follower in relations['followers']:
+            if follower['id'] == g.user['id']:
+                isFollowing = True
+                break
+    else:
+        isFollowing = False
 
     return render_template('profile.jhtml', userid=userid, userData=currUser, isLogged=il,
-                           myPage=True if il and g.user.get('id') == userid else False, relations=relations)
+                           myPage=myPage, relations=relations, isFollowing=isFollowing)
 
 
 @frontend.route('/')

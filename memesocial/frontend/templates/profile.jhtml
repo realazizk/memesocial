@@ -4,6 +4,7 @@
     <link href=" {{ url_for('static', filename='css/cssProfile.css') }}" rel="stylesheet"/>
     <link href=" {{ url_for('static', filename='css/jquery.colorpanel.css') }}" rel="stylesheet"/>
     <link href="https://fonts.googleapis.com/css?family=Open+Sans" rel="stylesheet">
+    <link href="{{ url_for('static', filename='css/logPop.css') }}" rel="stylesheet"/>
 {% endblock %}
 {% block content %}
 
@@ -13,6 +14,7 @@
             <ul></ul>
 	</div>
     {% endif %}
+
     
     <div id="duh" style="background-color: {{ userData.color }}" class="imgCover">
         <div class="container">
@@ -34,17 +36,25 @@
                         </div>
                         <div class="col-xs-12">
                             <div class="bio">
-                                {% if userData.bio %} {{ userData.bio|striptags }} {% elif myPage %} Edit bio {% endif %}
+                                {% if myPage %}
+				    <div ng-controller="Ctrl">
+					<a href="#" editable-textarea="user.desc" e-rows="3" e-cols="40" onbeforesave="updateUser($data)">
+					   {a user.desc || 'Edit bio' a}
+					</a>
+				    </div>
+				{% else %}
+				    {{ userData.bio }}
+				{% endif %}
                             </div>
                         </div>
                     </div>
                 </div>
-                <div class="col-xs-3">
-                    <div class="row">
-                        <div class="col-xs-12">
+                <div ng-controller="followController" class="col-xs-3">
+                    <div  class="row">
+                         <div class="col-xs-12">
                             <div class="row" style="text-align: center">
-                                <div class="col-xs-4" style="font-size: 1.5em">{{ relations.followers|length }}</div>
-                                <div class="col-xs-4 col-xs-offset-4" style="font-size: 1.5em">{{ relations.leaders|length }}</div>
+                                <div class="col-xs-4" style="font-size: 1.5em">{a followers  a}</div>
+                                <div class="col-xs-4 col-xs-offset-4" style="font-size: 1.5em">{a leaders a}</div>
                             </div>
                             <div class="row" style="text-align: center">
                                 <div class="col-xs-4">Followers</div>
@@ -52,7 +62,7 @@
                             </div>
                             <div class="row">
                                 <div class="col-xs-12">
-                                    <a  id="followButt" class="btn btn-block btn-primary btn-outline" {% if myPage %} style="visibility: hidden" {% endif %}>Follow</a>
+                                    <a ng-click="doIt();"  id="followButt" class="btn btn-block btn-primary btn-outline" {% if myPage %} style="visibility: hidden" {% endif %}>{a fButt ? 'Unfollow': 'Follow'  a}</a>
                                 </div>
                             </div>
                         </div>
@@ -61,7 +71,7 @@
             </div>
         </div>
     </div>
-    <div  ng-app='myApp' ng-controller='myController' id="myContent" class="container-fluid">
+    <div ng-controller='myController' id="myContent" class="container-fluid">
         <div id="space" style="margin-top: 50px;"></div>
         <div infinite-scroll='meme.nextPage()' infinite-scroll-disabled='meme.busy' infinite-scroll-distance='1'>
             <div ng-repeat='item in meme.items'>
@@ -102,18 +112,23 @@
             </div>
         </div>
     </div>
-    <script src="https://cdn.jsdelivr.net/jquery.stellar/0.6.2/jquery.stellar.min.js"></script>
-    <script src="{{ url_for('static', filename='js/jquery.colorpanel.js') }}"></script>
 
+        
+    {% include 'loginPopup.jhtml' %}
+
+    
+    <script src="{{ url_for('static', filename='js/jquery.colorpanel.js') }}"></script>
+    
     <script>
      a = $('.myRow');
      a.css('padding-top', ($('.imgCover').height()/2) - (a.height()/2));
+
      $(function() {
          $(".hearty").on("click", function() {
              $(this).toggleClass("is-active");
          });
      });
-     var myApp = angular.module('myApp', ['infinite-scroll']);
+     var myApp = angular.module('myApp', ['infinite-scroll', 'xeditable']);
      myApp.controller('myController', function($scope, MemeSocial) {
          $scope.meme = new MemeSocial();
      });
@@ -148,6 +163,41 @@
          return Meme;
      });
 
+     myApp.run(function(editableOptions) {
+	 editableOptions.theme = 'bs3';
+     });
+
+     myApp.controller('Ctrl', function($scope, $http) {
+	 $scope.user = {
+	     desc: '{{ userData.bio }}'
+	 };
+	 
+	 $scope.updateUser = function(data) {
+	     return $http.post('/api/update_bio', {bio: data});
+	 };
+
+     });
+
+     myApp.controller('followController', function ($scope, $http){
+	 $scope.fButt = {% if isFollowing %} true {% else  %} false {% endif %};
+
+	 $scope.followers = {{ relations.followers|length }};
+	 $scope.leaders = {{ relations.leaders|length }};
+	 
+	 $scope.doIt = function () {
+	     if (!$scope.fButt) {
+		 $http.get('/api/follow/' + {{ userData.id }}).success(function () {
+		     $scope.fButt = !$scope.fButt;
+		     $scope.followers += 1;
+		 });
+	     } else {
+		 $http.get('/api/unfollow/' + {{ userData.id }}).success(function () {
+		     $scope.fButt = !$scope.fButt;
+		     $scope.followers -= 1;
+		 });
+	     }
+	 }
+     });
      $('#colorPanel').ColorPanel({
          styleSheet: '#duh'
          , animateContainer: '#duh'
