@@ -1,0 +1,1 @@
+/home/mohamed/colorpanel/dist/jquery.colorpanel.js

@@ -51,7 +51,16 @@ def dashboard():
 @frontend.route('/profile/<int:userid>')
 def user_profile(userid):
     currUser = loads(apiViews.user_info(userid)[0].data)
-    return render_template('profile.jhtml', userid=userid, userData=currUser, isLogged=g.user is not None)
+    relations = loads(apiViews.rels(userid)[0].data)
+    if 'error' in currUser:
+        abort(404)
+    try:
+        il = g.user is not None
+    except:
+        il = False
+
+    return render_template('profile.jhtml', userid=userid, userData=currUser, isLogged=il,
+                           myPage=True if il and g.user.get('id') == userid else False, relations=relations)
 
 
 @frontend.route('/')

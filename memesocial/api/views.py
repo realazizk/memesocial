@@ -141,19 +141,21 @@ def update_profile_image():
         return (jsonify({'success': [{'detail': 'Uploaded image succefully'}]}), 200)
 
 
-@api.route('/update_cover_image', methods=['POST'])
+# ugly I will turn this into a rest api, I'm doing fast dirty hacking for now.
+@api.route('/update_cover/<color>')
 @login_required
-def update_cover_image():
-    imageFile = request.get_data()
-    if imageFile is not None:
-        filename = utils.save_file(
-            imageFile
-        )
-        query = User.update(coverProfile=config.SITE_URL + '/images/' + filename)\
+def update_cover_color(color):
+    from memesocial.api import colorcodes
+    colorName = colorcodes.theReverseColors.get('#'+color.upper(), False)
+    print colorName
+    if colorName:
+        query = User.update(coverProfile=colorName)\
                     .where(User.id == g.user['id'])
         if not query.execute():
-            return (jsonify({'errors': [{'detail': 'Could not upload image'}]}), 422)
-        return (jsonify({'success': [{'detail': 'Uploaded image succefully'}]}), 200)
+            return (jsonify({'errors': [{'detail': 'Could not update cover color'}]}), 422)
+        return (jsonify({'success': [{'detail': 'Updated cover color succefully'}]}), 200)
+    else:
+        return (jsonify({'errors': [{'detail': 'Color not found'}]}), 422)
 
 
 @api.route('/follow/<int:leaderid>')
@@ -270,12 +272,17 @@ def rels(userid):
 
 @api.route('/user/<int:userid>')
 def user_info(userid):
-    someKindOfUser = User.get(User.id == userid)
+    from memesocial.api.colorcodes import theColors
+    try:
+        someKindOfUser = User.get(User.id == userid)
+    except DoesNotExist:
+        return (jsonify({'error': {'detail': 'User not found', 'code': USERNAME_NOT_FOUND}}), 422)
     data = {}
     data['username'] = someKindOfUser.username
     data['profile_image'] = someKindOfUser.imageProfile
     data['cover_image'] = someKindOfUser.coverProfile
     data['id'] = someKindOfUser.id
+    data['color'] = theColors[someKindOfUser.coverProfile]
 
     return (
         jsonify(data),
@@ -323,7 +330,8 @@ def user_posts(userid):
             'id': b.id,
             'url': b.url,
             'description': b.description,
-            'date': b.date
+            'date': b.date,
+            'hearts': []
         })
     # i don't need previous for now I'm gonna do a infite scroll
     nextData = Image.select().where(Image.owner == userid).order_by(Image.id).offset(start + limit - 1).limit(limit).count()

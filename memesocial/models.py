@@ -29,8 +29,12 @@ class User(BaseModel):
     id = PrimaryKeyField()
     username = FixedCharField(100, unique=True)
     password = FixedCharField(100)
-    imageProfile = FixedCharField(250, null=True)
-    coverProfile = FixedCharField(250, null=True)
+
+    bio = FixedCharField(40, default='')
+    imageProfile = FixedCharField(250, null=True, default='/images/anonymous.png')
+
+    # this will be some color.
+    coverProfile = FixedCharField(250, null=True, default='GREEN')
     email = FixedCharField(100, null=True)
     langid = ForeignKeyField(Language, to_field='id', null=True)
     active = BooleanField()

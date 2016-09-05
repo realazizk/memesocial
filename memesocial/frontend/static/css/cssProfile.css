@@ -52,6 +52,9 @@ div.circle-avatar{
     display: flex;
     align-items: center;
     z-index: 2;
+    width: inherit;
+    position: fixed;
+    
 }
 
 

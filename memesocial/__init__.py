@@ -31,7 +31,9 @@ def get_image(filename):
 
         img.thumbnail(THUMBNAIL_SIZE)
         bufferd = StringIO()
-        img.save(bufferd, 'JPEG')
+
+        # return this in png?
+        img.save(bufferd, 'PNG')
         contents = bufferd.getvalue()
         bufferd.close()
         response = make_response(contents)
