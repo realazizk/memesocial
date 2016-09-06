@@ -6,6 +6,7 @@ from itsdangerous import Serializer
 from memesocial import config
 from memesocial.api import views as apiViews
 from json import loads
+from htmlmin.minify import html_minify
 
 
 frontend = Blueprint(
@@ -70,8 +71,11 @@ def user_profile(userid):
     else:
         isFollowing = False
 
-    return render_template('profile.jhtml', userid=userid, userData=currUser, isLogged=il,
-                           myPage=myPage, relations=relations, isFollowing=isFollowing)
+    def html_minify(r):
+        return r
+        
+    return html_minify(render_template('profile.jhtml', userid=userid, userData=currUser, isLogged=il,
+                                       myPage=myPage, relations=relations, isFollowing=isFollowing))
 
 
 @frontend.route('/')

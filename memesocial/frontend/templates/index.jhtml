@@ -6,7 +6,7 @@
 	    <div id="actDiv" class="row row-centered">
 		<div class="center-block">
 		    <img alt="" src="{{ url_for('static', filename='imgs/memesocial.png') }}"/>
-		    <p style="color: #efe0e0">A social network only for sharing and creating</p>
+		    <p style="color: #efe0e0">A social network only for sharing and creating memes</p>
 		</div>
 	    </div>
 	    
@@ -77,7 +77,7 @@
 	    
 	    <div  id="myElem2" ng-hide="hideIt" class="row row-centered" ng-click="logEvt();" style="margin-top: 1em;">
 		<div class="center-block">
-		    <a id="logButt" class="btn btn-primary btn-outline">Login</a>
+		    <a data-target="#login-modal" id="logButt" class="btn btn-primary btn-outline">Login</a>
 		</div>
 	    </div>
 

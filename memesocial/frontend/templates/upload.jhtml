@@ -1,0 +1,38 @@
+<div class="modal fade" id="upload-modal" tabindex="-1" role="dialog" aria-labelledby="myUploadLabel" aria-hidden="true" style="display: none;" >
+    <div class="modal-dialog">
+	<div class="modal-content">
+	    <div class="modal-header">
+		<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+		    <span aria-hidden="true">&times;</span>
+		</button>
+		<h4 class="modal-title">Publish a meme</h4>
+	    </div>
+	    <div class="modal-body">
+		<label class="control-label">Select File</label>
+		<input id="input-21" name="input-21"  type="file" accept="image/*" class="file-loading">
+		<script>
+		 
+		 $(document).on('ready', function() {
+		     $("#input-21").fileinput({
+			 uploadUrl: "/api/create_content",
+			 previewFileType: "image",
+			 browseClass: "btn btn-success",
+			 browseLabel: "Pick Image",
+			 browseIcon: "<i class=\"glyphicon glyphicon-picture\"></i> ",
+			 removeClass: "btn btn-danger",
+			 removeLabel: "Delete",
+			 removeIcon: "<i class=\"glyphicon glyphicon-trash\"></i> ",
+			 uploadClass: "btn btn-info",
+			 uploadLabel: "Upload",
+			 uploadIcon: "<i class=\"glyphicon glyphicon-upload\"></i> "
+		     });
+		 });
+		</script>
+	    </div>
+	    <div class="modal-footer">
+		<button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+		<button type="button" class="btn btn-primary">Make it public</button>
+	    </div>
+	</div>
+    </div>
+</div>

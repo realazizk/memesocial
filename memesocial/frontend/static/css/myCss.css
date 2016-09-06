@@ -129,3 +129,16 @@ body {
     height: 35px;
 }
 .navbar {min-height:35px !important;}
+
+
+#myBio {
+    color: #fff;
+}
+
+#myBio:hover {
+    color: #fff;
+}
+
+#myBio:visited {
+    colro: #fff;
+}

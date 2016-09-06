@@ -2,13 +2,14 @@
 
 {% block head %}
     <link href="http://fonts.googleapis.com/earlyaccess/droidsansethiopic.css" rel="stylesheet"/>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-fileinput/4.3.4/css/fileinput.min.css" rel="stylesheet"/>
 {% endblock %}
 
 {% block body %}
-    <nav style="background: #fff;" class="navbar navbar-default navbar-fixed-top">
-	<div class="container-fluid">
+    <nav  ng-controller="menuController" style="background: #fff;" class="navbar navbar-default navbar-fixed-top">
+	<div class="container">
 	    
-	    <div class="navbar-left">
+	    <div class="nav navbar-nav navbar-left">
 		<div class="navbar-header">
 		    <a class="navbar-brand" href="/">
 			Memesocial
@@ -22,9 +23,16 @@
 	    </form>
 
 	    
-	    <div class="navbar-right">
+	    <div class="nav navbar-nav navbar-right">
 		{% if not isLogged %}
-		    <button style="background: #fff;" id="loginButt" type="button" class="btn btn-default">Login</button>
+		    <button style="background: #fff;" type="button" class="btn btn-default butts" data-toggle="modal" data-target="#login-modal">Login</button>
+		{% else %}
+		    <button style="height: 33px;
+				   background: #45ce49;
+				   margin-right: 4px;
+				   color: #fff;"  data-toggle="modal" data-target="#upload-modal" type="button" class="btn btn-default butts"><span class="glyphicon glyphicon-pencil"></span></button>
+		    
+		    <button  ng-click="logout();" style="background: #fff;" id="logoutButt" type="button" class="btn btn-default butts"><span class="glyphicon glyphicon-log-in"></span> Logout</button>
 		{% endif %}
 	    </div>
 	</div>

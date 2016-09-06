@@ -129,16 +129,19 @@ def logout():
 @api.route('/update_profile_image', methods=['POST'])
 @login_required
 def update_profile_image():
-    imageFile = request.get_data()
-    if imageFile is not None:
+    if 'file-input' not in request.files:
+        return (jsonify({'errors': {'detail': 'Error in request'}}), 422)
+    imageFile = request.files['file-input']
+    print imageFile
+    if imageFile.filename != '':
         filename = utils.save_file(
-            imageFile
+            imageFile.read()
         )
         query = User.update(imageProfile=config.SITE_URL + '/images/' + filename)\
                     .where(User.id == g.user['id'])
         if not query.execute():
             return (jsonify({'errors': [{'detail': 'Could not upload image'}]}), 422)
-        return (jsonify({'success': [{'detail': 'Uploaded image succefully'}]}), 200)
+        return (jsonify({'success': {'detail': 'Uploaded image succefully', 'image': config.SITE_URL + '/images/' + filename}}), 200)
 
 
 # ugly I will turn this into a rest api, I'm doing fast dirty hacking for now.
@@ -218,14 +221,16 @@ def gcontent(cid):
 @api.route('/create_content', methods=['POST'])
 @login_required
 def createcontent():
-    imageFile = request.json.get('image')
-    description = request.json.get('desc')
-    if not (imageFile is None or description is None):
+    if 'input-21' not in request.files:
+        return (jsonify({'errors': {'detail': 'Error in request'}}), 422)
+    imageFile = request.files['input-21']
+
+    if imageFile.filename != '':
         filename = utils.save_file(
-            utils.decode_image(imageFile)
+            imageFile.read()
         )
         img = Image(url=config.SITE_URL + '/images/' + filename,
-                    owner=g.user['id'], description=description,
+                    owner=g.user['id'],
                     date=datetime.datetime.now())
         if not bool(img.save()):
             return (jsonify({'errors': [{'detail': 'Could not upload image'}]}), 422)

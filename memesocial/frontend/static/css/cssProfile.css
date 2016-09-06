@@ -62,8 +62,6 @@ div.circle-avatar{
     z-index: 4;
     position: relative;
     background:  #f6f5f5;
-    padding-right: 30%;
-    padding-left: 30%;
 }
 
 #followButt {
@@ -131,7 +129,7 @@ input::-webkit-input-placeholder {
     color: #999;
 }
 
-#loginButt {
+.butts {
     border-radius: 20px;
     margin-top: 1px;
     padding-bottom: 5px;

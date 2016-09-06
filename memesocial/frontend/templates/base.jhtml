@@ -9,6 +9,9 @@
 	<link href="{{ url_for('static', filename='css/myCss.css')}}" rel="stylesheet"/>
 	<link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.6.3/css/font-awesome.min.css" rel="stylesheet"/>
 	<link rel="stylesheet" href="{{ url_for('static', filename='css/animate.css')}}">
+
+	<link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-fileinput/4.3.4/css/fileinput.css" rel="stylesheet"/>
+	
 	<meta http-equiv="Content-Type" content="text/html;charset=UTF-8" />
 
 	{% block head %}
@@ -23,6 +26,11 @@
 	<script src="{{ url_for('static', filename='js/angular-resource.min.js') }}"></script>
 	<script src="{{ url_for('static', filename='js/angular-route.min.js') }}"></script>
 	<script src="{{ url_for('static', filename='js/xeditable.min.js') }}"></script>
+	<script src="{{ url_for('static', filename='js/bootstrap.min.js') }}"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-fileinput/4.3.4/js/plugins/purify.min.js"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-fileinput/4.3.4/js/fileinput.min.js"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/angular-sanitize/1.5.8/angular-sanitize.min.js"></script>
+	
 	{% block body %}
 
 	{% endblock %}

@@ -4,10 +4,16 @@ from os import path
 from config import THUMBNAIL_SIZE
 from PIL import Image
 from StringIO import StringIO
+from flask_compress import Compress
+
 
 # from werkzeug.contrib.profiler import ProfilerMiddleware
 
 app = Flask(__name__)
+
+Compress(app)
+
+
 app.config.from_object('memesocial.config')
 # app.wsgi_app = ProfilerMiddleware(app.wsgi_app, restrictions=[30])
 
