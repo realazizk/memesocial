@@ -83,49 +83,27 @@
         </div>
     </div>
     <div ng-controller='myController' id="myContent" class="container-fluid">
-        <div id="space" style="margin-top: 50px;"></div>
-        <div infinite-scroll='meme.nextPage()' infinite-scroll-disabled='meme.busy' infinite-scroll-distance='1'>
-            <div ng-repeat='item in meme.items'>
-                <div class="row row-centered">
-		    <div class="col-md-6 col-md-offset-3 col-xs-10 col-xs-offset-1">
-			<div class="center-block">
-                            <div class="card">
-				<div class="card-header">
-                                    <div class="row">
-					<div class="col-xs-2">
-                                            <div class="profileThumb" style="background-image: url('')"></div>
-					</div>
-					<div class="col-xs-6">
-                                            <a href="">moonflock</a>
-					</div>
-					<div class="col-xs-4">
-                                            <div class="hearty"></div>
-					</div>
-					<div class="col-xs-6">
-                                            Toadays date hahaha
-					</div>
-                                    </div>
-				</div>
-				<div class="card-image">
-                                    <img class="img-responsive" src="{a item.url a}">
-				</div>
-				<div class="card-content">
-                                    <p>{a item.description  a}</p>
-				</div>
-				<div class="card-action">
-                                    <a href="#">Hearts <span class="badge">{a item.hearts.length  a}</span></a>
-                                    <a href="#">Comments <span class="badge">17</span></a>
-				</div>
-                            </div>
-			</div>
-		    </div>
-                </div>
-                <div style='clear: both;'></div>
-                <div ng-show='meme.busy'>Loading data...</div>
-            </div>
-        </div>
-    </div>
+	<div id="space" style="margin-top: 50px;"></div>
+	<div infinite-scroll='meme.nextPage()' infinite-scroll-disabled='meme.busy' infinite-scroll-distance='1'>
 
+	    <div ng-repeat='item in meme.items'>
+		<div class="col-md-4">
+		    <div class="imgs vertical-center" style="background-color: #fff; background-image: url('{a item.url  a}')">
+			<div class="kk">
+			    
+			</div>
+			
+			<div class="opt">
+			    <i class="fa fa-heart" aria-hidden="true"></i> {a item.hearts a}&nbsp;&nbsp;&nbsp;&nbsp;
+			    <i class="fa fa-comment" aria-hidden="true"></i> {a item.comments a}
+			</div>
+
+			
+		    </div>
+		</div>
+	    </div>
+	</div>
+    </div>
     
     {% include 'loginPopup.jhtml' %}
     
@@ -178,7 +156,7 @@
              this.items = [];
              this.busy = false;
              this.after = '';
-             this.nextUrl = "/api/user_posts/{{ userid}}?limit=2";
+             this.nextUrl = "/api/user_posts/{{ userid}}?limit=3";
          };
          Meme.prototype.nextPage = function() {
              if (this.busy) return;

@@ -22,6 +22,8 @@
 		<input id="search-bar" type="search" placeholder="Search">
 	    </form>
 
+
+	    
 	    
 	    <div class="nav navbar-nav navbar-right">
 		{% if not isLogged %}
