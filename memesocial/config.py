@@ -14,4 +14,4 @@ PROFILE = True
 THUMBNAIL_SIZE = (128, 128)
 if environ.get('TESTING') == '1':
     DATABASE = tempfile.mkstemp()[1]
-SITE_URL = 'http://192.168.1.14:1337/'
+SITE_URL = 'http://192.168.1.14:1337'

@@ -1,9 +1,9 @@
 
-from peewee import SqliteDatabase, Model,\
+from peewee import MySQLDatabase, Model,\
     PrimaryKeyField, FixedCharField, ForeignKeyField,\
     BooleanField, TextField, DateTimeField
 from passlib.apps import custom_app_context as pwd_context
-from memesocial import config
+
 
 __author__ = "Mohamed Aziz Knani"
 
@@ -11,7 +11,7 @@ __doc__ = """
  My models file, please see database_design.erd
 """
 
-db = SqliteDatabase(config.DATABASE)
+db = MySQLDatabase('memesocialDatabase', user='root', password='123', host='127.0.0.1')
 
 
 class BaseModel(Model):
@@ -28,7 +28,7 @@ class Language(BaseModel):
 class User(BaseModel):
     id = PrimaryKeyField()
     username = FixedCharField(100, unique=True)
-    password = FixedCharField(100)
+    password = FixedCharField(120)
 
     bio = FixedCharField(40, default='')
     imageProfile = FixedCharField(250, null=True, default='/images/anonymous.png')

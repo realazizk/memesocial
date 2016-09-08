@@ -325,8 +325,10 @@ def user_posts(userid):
     limit = int(request.args.get('limit', '10'))
 
     # so this gonna return user data + next page (if it exists)
-    # TODO: get number of hearts and check if user is logged in if yes check if he already liked it, also get number of comments
+
+    # TODO: get number of hearts and comments
     bruttoData = Image.select().where(Image.owner == userid).order_by(Image.id.desc()).offset(start - 1).limit(limit)
+
     userContent = []
     for b in bruttoData:
         userContent.append({
@@ -334,7 +336,10 @@ def user_posts(userid):
             'url': b.url,
             'description': b.description,
             'date': b.date,
-            'hearts': []
+            # not the best solution, I will some precious milliseconds here.
+            # TODO: use an inner join ?
+            'hearts': Heart.select().where(Heart.imageId == b.id).count(),
+            'comments': Comment.select().where(Comment.imageId == b.id).count()
         })
     # i don't need previous for now I'm gonna do a infite scroll
     nextData = Image.select().where(Image.owner == userid).order_by(Image.id).offset(start + limit - 1).limit(limit).count()
@@ -386,6 +391,7 @@ def update_bio():
             return (jsonify({'success': {'detail': 'Updated the bio', 'code': BIO_UPDATED}}), 200)
         else:
             return (jsonify({'error': {'detail': 'Did not update the bio', 'code': BIO_NOT_UPDATED}}), 200)
+
 
 @api.route('/news_feed')
 @login_required

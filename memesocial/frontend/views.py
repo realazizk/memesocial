@@ -71,9 +71,6 @@ def user_profile(userid):
     else:
         isFollowing = False
 
-    def html_minify(r):
-        return r
-        
     return html_minify(render_template('profile.jhtml', userid=userid, userData=currUser, isLogged=il,
                                        myPage=myPage, relations=relations, isFollowing=isFollowing))
 
@@ -81,3 +78,13 @@ def user_profile(userid):
 @frontend.route('/')
 def index():
     return render_template('index.jhtml')
+
+
+@frontend.route('/content/<int:imageid>')
+def serve_image(imageid):
+    try:
+        il = g.user is not None
+    except:
+        il = False
+
+    return html_minify(render_template('images.jhtml', isLogged=il))
