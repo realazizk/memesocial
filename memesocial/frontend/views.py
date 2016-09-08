@@ -8,20 +8,18 @@ from memesocial.api import views as apiViews
 from json import loads
 from htmlmin.minify import html_minify
 
-
-frontend = Blueprint(
-    'frontend',
-    __name__,
-    template_folder='templates'
-)
+frontend = Blueprint('frontend', __name__, template_folder='templates')
 
 
 def login_required(f):
     @wraps(f)
     def decorated_function(*args, **kwargs):
         if g.user is None:
-            return (jsonify({'errors': [{'detail': 'You are not allowed here sucker'}]}), 405)
+            return (jsonify(
+                {'errors': [{'detail': 'You are not allowed here sucker'}]}),
+                    405)
         return f(*args, **kwargs)
+
     return decorated_function
 
 
@@ -41,7 +39,8 @@ def serve_static(dire, filename):
     if dire not in set(['js', 'fonts', 'css', 'imgs']):
         abort(404)
     root_dir = os.path.dirname(os.path.realpath(__file__))
-    return send_from_directory(os.path.join(root_dir, 'static', dire), filename)
+    return send_from_directory(
+        os.path.join(root_dir, 'static', dire), filename)
 
 
 @frontend.route('/dashboard')
@@ -71,8 +70,15 @@ def user_profile(userid):
     else:
         isFollowing = False
 
-    return html_minify(render_template('profile.jhtml', userid=userid, userData=currUser, isLogged=il,
-                                       myPage=myPage, relations=relations, isFollowing=isFollowing))
+    return html_minify(
+        render_template(
+            'profile.jhtml',
+            userid=userid,
+            userData=currUser,
+            isLogged=il,
+            myPage=myPage,
+            relations=relations,
+            isFollowing=isFollowing))
 
 
 @frontend.route('/')
@@ -87,4 +93,7 @@ def serve_image(imageid):
     except:
         il = False
 
-    return html_minify(render_template('images.jhtml', isLogged=il))
+    # TODO: fix this hacky shit
+    return html_minify(
+        render_template(
+            'images.jhtml', isLogged=il, userData=None, relations=None))

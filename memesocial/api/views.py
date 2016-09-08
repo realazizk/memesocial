@@ -10,22 +10,20 @@ from retcodes import USERNAME_NOT_FOUND, PASSWORD_NOT_FOUND, EMAIL_NOT_FOUND, WR
     SHORT_USERNAME, ALREADY_REGISTERED_USERNAME, USERNAME_AVAIL, EMAIL_NON_VALID, ALREADY_REGISTERED_EMAIL,\
     EMAIL_AVAIL, USED_USERNAME, WRONG_LOGIN, BIO_NOT_UPDATED, BIO_UPDATED
 
-
 __author__ = "Mohamed Aziz Knani"
 
-api = Blueprint(
-    'api',
-    __name__,
-    url_prefix='/api'
-)
+api = Blueprint('api', __name__, url_prefix='/api')
 
 
 def login_required(f):
     @wraps(f)
     def decorated_function(*args, **kwargs):
         if g.user is None:
-            return (jsonify({'errors': [{'detail': 'You are not allowed here sucker'}]}), 405)
+            return (jsonify(
+                {'errors': [{'detail': 'You are not allowed here sucker'}]}),
+                    405)
         return f(*args, **kwargs)
+
     return decorated_function
 
 
@@ -61,33 +59,42 @@ def reg():
     email = request.json.get('email')
 
     if not username:
-        return (jsonify({'error': {'detail': 'Specify a username', 'code': USERNAME_NOT_FOUND}}), 400)
+        return (jsonify({'error': {'detail': 'Specify a username',
+                                   'code': USERNAME_NOT_FOUND}}), 400)
     if not password:
-        return (jsonify({'error': {'detail': 'Specify a password', 'code': PASSWORD_NOT_FOUND}}), 400)
+        return (jsonify({'error': {'detail': 'Specify a password',
+                                   'code': PASSWORD_NOT_FOUND}}), 400)
     if not email:
-        return (jsonify({'error': {'detail': 'Specify an email', 'code': EMAIL_NOT_FOUND}}), 400)
+        return (jsonify({'error': {'detail': 'Specify an email',
+                                   'code': EMAIL_NOT_FOUND}}), 400)
 
     try:
         # I don't trust the users though javascript the frontend part will take care of this
         if not validate_email(email):
-            return (jsonify({'error': {'detail': 'Wrong email', 'code': WRONG_EMAIL}}), 400)
+            return (jsonify({'error': {'detail': 'Wrong email',
+                                       'code': WRONG_EMAIL}}), 400)
 
         if valid_username(username)[1] == 400:
             return valid_username(username)
 
-        query = User.select().where(fn.Lower(User.username) == username.lower())
+        query = User.select().where(
+            fn.Lower(User.username) == username.lower())
         if query.exists():
-            return (jsonify({'error': {'detail': 'Someone already uses this email', 'code': USED_USERNAME}}), 400)
+            return (jsonify(
+                {'error': {'detail': 'Someone already uses this email',
+                           'code': USED_USERNAME}}), 400)
 
-        User.create(username=username, password=User.hash_password(
-            password), active=True, online=True, email=email)
+        User.create(
+            username=username,
+            password=User.hash_password(password),
+            active=True,
+            online=True,
+            email=email)
         # do something with user?
     except IntegrityError:
         return (jsonify({'error': {'detail': 'Something wrong happend'}}), 422)
 
-    return (jsonify({
-        'success': 'Created user succefully'
-    }), 200)
+    return (jsonify({'success': 'Created user succefully'}), 200)
 
 
 @api.route('/login', methods=['POST'])
@@ -95,7 +102,9 @@ def login():
     username = request.json.get('username')
     password = request.json.get('password')
     if username is None or password is None:
-        return (jsonify({'error': {'detail': 'Username and/or password is none', 'code': WRONG_LOGIN}}), 422)
+        return (jsonify(
+            {'error': {'detail': 'Username and/or password is none',
+                       'code': WRONG_LOGIN}}), 422)
     try:
         user = User.get(User.username == username)
     except DoesNotExist:
@@ -109,14 +118,12 @@ def login():
             return (jsonify({'success': 'Logged in succefully'}), 200)
         else:
             err = 'password'
-    return (jsonify(
-        {
-            'error': {
-                'detail': 'The %s is incorrect' % err,
-                'code': WRONG_LOGIN
-            }
+    return (jsonify({
+        'error': {
+            'detail': 'The %s is incorrect' % err,
+            'code': WRONG_LOGIN
         }
-    ), 400)
+    }), 400)
 
 
 @api.route('/logout')
@@ -134,14 +141,15 @@ def update_profile_image():
     imageFile = request.files['file-input']
     print imageFile
     if imageFile.filename != '':
-        filename = utils.save_file(
-            imageFile.read()
-        )
+        filename = utils.save_file(imageFile.read())
         query = User.update(imageProfile=config.SITE_URL + '/images/' + filename)\
                     .where(User.id == g.user['id'])
         if not query.execute():
-            return (jsonify({'errors': [{'detail': 'Could not upload image'}]}), 422)
-        return (jsonify({'success': {'detail': 'Uploaded image succefully', 'image': config.SITE_URL + '/images/' + filename}}), 200)
+            return (jsonify(
+                {'errors': [{'detail': 'Could not upload image'}]}), 422)
+        return (jsonify({'success': {'detail': 'Uploaded image succefully',
+                                     'image': config.SITE_URL + '/images/' +
+                                     filename}}), 200)
 
 
 # ugly I will turn this into a rest api, I'm doing fast dirty hacking for now.
@@ -149,13 +157,15 @@ def update_profile_image():
 @login_required
 def update_cover_color(color):
     from memesocial.api import colorcodes
-    colorName = colorcodes.theReverseColors.get('#'+color.upper(), False)
+    colorName = colorcodes.theReverseColors.get('#' + color.upper(), False)
     if colorName:
         query = User.update(coverProfile=colorName)\
                     .where(User.id == g.user['id'])
         if not query.execute():
-            return (jsonify({'errors': [{'detail': 'Could not update cover color'}]}), 422)
-        return (jsonify({'success': [{'detail': 'Updated cover color succefully'}]}), 200)
+            return (jsonify(
+                {'errors': [{'detail': 'Could not update cover color'}]}), 422)
+        return (jsonify(
+            {'success': [{'detail': 'Updated cover color succefully'}]}), 200)
     else:
         return (jsonify({'errors': [{'detail': 'Color not found'}]}), 422)
 
@@ -164,21 +174,16 @@ def update_cover_color(color):
 @login_required
 def followLeader(leaderid):
     if leaderid == g.user['id']:
-        return (
-            jsonify(
-                {'errors': [{'detail': 'You can not follow yourself silly'}]}), 405
-        )
+        return (jsonify(
+            {'errors': [{'detail': 'You can not follow yourself silly'}]}),
+                405)
     # if there is an integrity error (the relation is already existant)
     try:
-        FollowerRelation.create(
-            follower=g.user['id'],
-            leader=leaderid
-        )
+        FollowerRelation.create(follower=g.user['id'], leader=leaderid)
     except IntegrityError:
-        return (
-            jsonify(
-                {'errors': [{'detail': 'You are already following this user'}]}), 405
-        )
+        return (jsonify(
+            {'errors': [{'detail': 'You are already following this user'}]}),
+                405)
 
     return (jsonify({'success': 'Followed user succefully'}))
 
@@ -186,9 +191,12 @@ def followLeader(leaderid):
 @api.route('/unfollow/<int:leaderid>')
 @login_required
 def unfollowLeader(leaderid):
-    r = FollowerRelation.delete().where(FollowerRelation.follower == g.user['id'], FollowerRelation.leader == leaderid)
+    r = FollowerRelation.delete().where(
+        FollowerRelation.follower == g.user['id'],
+        FollowerRelation.leader == leaderid)
     if not bool(r.execute()):
-        return (jsonify({'error': 'It seems that no relation like exist'}), 202)
+        return (jsonify({'error': 'It seems that no relation like exist'}),
+                202)
     return (jsonify({'success': 'Unfollowed user succefully'}), 200)
 
 
@@ -198,7 +206,8 @@ def gcontent(cid):
     try:
         i = Image.get(Image.id == cid)
     except DoesNotExist:
-        return (jsonify({'errors': [{'detail': 'Content does not exist'}]}), 422)
+        return (jsonify({'errors': [{'detail': 'Content does not exist'}]}),
+                422)
     hearters = Heart.select().where(Heart.imageId == i.id)
     commentors = Comment.select().where(Comment.imageId == i.id)
     hs = []
@@ -213,9 +222,20 @@ def gcontent(cid):
         cm.append({
             'username': comm.usrId.username,
             'image_profile': comm.usrId.imageProfile,
-            'id': comm.usrId.id
+            'id': comm.usrId.id,
+            'body': comm.body,
+            'date': comm.date,
         })
-    return (jsonify({'success': [{'detail': 'Request made succefully', 'hearters': hs, 'commentors': cm}]}), 200)
+
+    return (jsonify({'success': {
+        'hearters': hs,
+        'commentors': cm,
+        'url': i.url,
+        'owner': {
+            'username': i.owner.username,
+            'image_profile': i.owner.imageProfile
+        }
+    }}), 200)
 
 
 @api.route('/create_content', methods=['POST'])
@@ -226,14 +246,14 @@ def createcontent():
     imageFile = request.files['input-21']
 
     if imageFile.filename != '':
-        filename = utils.save_file(
-            imageFile.read()
-        )
-        img = Image(url=config.SITE_URL + '/images/' + filename,
-                    owner=g.user['id'],
-                    date=datetime.datetime.now())
+        filename = utils.save_file(imageFile.read())
+        img = Image(
+            url=config.SITE_URL + '/images/' + filename,
+            owner=g.user['id'],
+            date=datetime.datetime.now())
         if not bool(img.save()):
-            return (jsonify({'errors': [{'detail': 'Could not upload image'}]}), 422)
+            return (jsonify(
+                {'errors': [{'detail': 'Could not upload image'}]}), 422)
         return (jsonify({'success': [{'detail': 'Uploaded image succefully',
                                       'contentid': img.id}]}), 200)
 
@@ -250,27 +270,18 @@ def rels(userid):
     followerList = []
     leadersList = []
     for f in followers:
-        followerList.append(
-            {
-                'id': f.follower.id,
-                'username': f.follower.username,
-                'profile_image': f.follower.imageProfile
-            }
-        )
+        followerList.append({
+            'id': f.follower.id,
+            'username': f.follower.username,
+            'profile_image': f.follower.imageProfile
+        })
     for l in leaders:
-        leadersList.append(
-            {
-                'id': l.leader.id,
-                'username': l.leader.username,
-                'profile_image': l.leader.imageProfile
-            }
-        )
-    return (
-        jsonify({
-            'followers': followerList,
-            'leaders': leadersList
-        }), 200
-    )
+        leadersList.append({
+            'id': l.leader.id,
+            'username': l.leader.username,
+            'profile_image': l.leader.imageProfile
+        })
+    return (jsonify({'followers': followerList, 'leaders': leadersList}), 200)
 
 
 @api.route('/user/<int:userid>')
@@ -279,7 +290,8 @@ def user_info(userid):
     try:
         someKindOfUser = User.get(User.id == userid)
     except DoesNotExist:
-        return (jsonify({'error': {'detail': 'User not found', 'code': USERNAME_NOT_FOUND}}), 422)
+        return (jsonify({'error': {'detail': 'User not found',
+                                   'code': USERNAME_NOT_FOUND}}), 422)
     data = {}
     data['username'] = someKindOfUser.username
     data['profile_image'] = someKindOfUser.imageProfile
@@ -287,10 +299,7 @@ def user_info(userid):
     data['id'] = someKindOfUser.id
     data['color'] = theColors[someKindOfUser.coverProfile]
     data['bio'] = someKindOfUser.bio
-    return (
-        jsonify(data),
-        200
-    )
+    return (jsonify(data), 200)
 
 
 @api.route('/comment', methods=['POST'])
@@ -307,13 +316,13 @@ def comment_on_something():
                 body=comment_content,
                 date=datetime.datetime.now(),
                 usrId=g.user['id'],
-                imageId=contentid
-            ).execute()
+                imageId=contentid).execute()
         else:
             return (jsonify({'error': 'Content does not exist'}), 404)
         return (jsonify({'success': 'Inserted comment succefully'}))
     else:
-        return (jsonify({'errors': ['Please pass a contentid and comment content']}), 400)
+        return (jsonify(
+            {'errors': ['Please pass a contentid and comment content']}), 400)
 
 
 # anyone could get user data like users: photos username...
@@ -327,7 +336,9 @@ def user_posts(userid):
     # so this gonna return user data + next page (if it exists)
 
     # TODO: get number of hearts and comments
-    bruttoData = Image.select().where(Image.owner == userid).order_by(Image.id.desc()).offset(start - 1).limit(limit)
+    bruttoData = Image.select().where(
+        Image.owner ==
+        userid).order_by(Image.id.desc()).offset(start - 1).limit(limit)
 
     userContent = []
     for b in bruttoData:
@@ -342,17 +353,14 @@ def user_posts(userid):
             'comments': Comment.select().where(Comment.imageId == b.id).count()
         })
     # i don't need previous for now I'm gonna do a infite scroll
-    nextData = Image.select().where(Image.owner == userid).order_by(Image.id).offset(start + limit - 1).limit(limit).count()
-    retData = {
-        'data': userContent
-    }
+    nextData = Image.select().where(Image.owner == userid).order_by(
+        Image.id).offset(start + limit - 1).limit(limit).count()
+    retData = {'data': userContent}
     if nextData != 0:
-        retData['next'] = utils.form_url(
-                ('', request.path), {
-                    'start': start + limit,
-                    'limit': limit
-                }
-        )
+        retData['next'] = utils.form_url(('', request.path), {
+            'start': start + limit,
+            'limit': limit
+        })
     if not retData['data']:
         return (jsonify({'errors': [{'detail': 'No more Posts'}]}), 422)
     return (jsonify(retData), 200)
@@ -366,7 +374,9 @@ def heart_it(contentid):
         # I don't need the returned heart instance
         Heart.create(imageId=contentid, userId=g.user['id'])
     except IntegrityError:
-        return (jsonify({'error': 'You sneaky bastard you already hearted this content.'}), 202)
+        return (jsonify(
+            {'error': 'You sneaky bastard you already hearted this content.'}),
+                202)
     return (jsonify({'success': 'Nice you hearted this content.'}), 200)
 
 
@@ -375,9 +385,12 @@ def heart_it(contentid):
 def unheart_it(contentid):
     # my endpoint to unheart this content with contentid
 
-    e = Heart.delete().where(Heart.imageId == contentid, Heart.userId == g.user['id'])
+    e = Heart.delete().where(Heart.imageId == contentid,
+                             Heart.userId == g.user['id'])
     if not bool(e.execute()):
-        return (jsonify({'error': 'You sneaky bastard you did not even heart this content'}), 202)
+        return (jsonify(
+            {'error': 'You sneaky bastard you did not even heart this content'
+             }), 202)
     return (jsonify({'success': 'Nice you unhearted this content.'}), 200)
 
 
@@ -388,9 +401,11 @@ def update_bio():
     if bio:
         q = User.update(bio=bio).where(User.id == g.user['id'])
         if q.execute():
-            return (jsonify({'success': {'detail': 'Updated the bio', 'code': BIO_UPDATED}}), 200)
+            return (jsonify({'success': {'detail': 'Updated the bio',
+                                         'code': BIO_UPDATED}}), 200)
         else:
-            return (jsonify({'error': {'detail': 'Did not update the bio', 'code': BIO_NOT_UPDATED}}), 200)
+            return (jsonify({'error': {'detail': 'Did not update the bio',
+                                       'code': BIO_NOT_UPDATED}}), 200)
 
 
 @api.route('/news_feed')
@@ -409,8 +424,10 @@ def get_news_feed():
     limit = int(request.args.get('limit', '10'))
 
     # get posts of leaders from last couple of hours
-    leaders = FollowerRelation.select(FollowerRelation.leader).where(FollowerRelation.follower == g.user['id'])
-    posts = Image.select().where(Image.owner << leaders).offset(start - 1).limit(limit)
+    leaders = FollowerRelation.select(FollowerRelation.leader).where(
+        FollowerRelation.follower == g.user['id'])
+    posts = Image.select().where(Image.owner << leaders).offset(start -
+                                                                1).limit(limit)
     psts = []
 
     result = json.loads(rels(g.user['id'])[0].data)
@@ -435,7 +452,11 @@ def get_news_feed():
             'description': post.description,
             'ouser': post.owner.username,
             'oimg': post.owner.imageProfile,
-            'score': 0.1 + (1 / (minutesElapsed[0] + 1)) * (((len(iFollowers.intersection(lFollower)) / 100) + (len(iLeader.intersection(lLeader)) / 100)) + (hearts(g.user['id'], post.owner.id) / 10) + (hearts(post.owner.id, g.user['id']) / 30))
+            'score': 0.1 + (1 / (minutesElapsed[0] + 1)) *
+            (((len(iFollowers.intersection(lFollower)) / 100) +
+              (len(iLeader.intersection(lLeader)) / 100)) +
+             (hearts(g.user['id'], post.owner.id) / 10) +
+             (hearts(post.owner.id, g.user['id']) / 30))
         })
 
     # nextData = Image.select().where(Image.owner << leaders).offset(start + limit - 1).limit(limit).count()
@@ -446,13 +467,18 @@ def get_news_feed():
 def valid_username(username):
     # return if a username is not already taken.
     if len(username) <= 4:
-        return (jsonify({'error': {'detail': 'the username should be more than 4 caracters long',
-                                   'code': SHORT_USERNAME}}), 400)
+        return (jsonify({'error':
+                         {'detail':
+                          'the username should be more than 4 caracters long',
+                          'code': SHORT_USERNAME}}), 400)
     query = User.select().where(fn.Lower(User.username) == username.lower())
     if query.exists():
-        return (jsonify({'error': {'detail': 'The username is already registerd', 'code': ALREADY_REGISTERED_USERNAME}}), 400)
+        return (jsonify({'error': {'detail':
+                                   'The username is already registerd',
+                                   'code': ALREADY_REGISTERED_USERNAME}}), 400)
     else:
-        return (jsonify({'success': {'detail': 'The username is available', 'code': USERNAME_AVAIL}}), 200)
+        return (jsonify({'success': {'detail': 'The username is available',
+                                     'code': USERNAME_AVAIL}}), 200)
 
 
 @api.route('/valid_email/<email>')
@@ -465,9 +491,12 @@ def valid_email(email):
                                    'code': EMAIL_NON_VALID}}), 400)
     query = User.select().where(User.email == email)
     if query.exists():
-        return (jsonify({'error': {'detail': 'The email is associated to another user', 'code': ALREADY_REGISTERED_EMAIL}}), 400)
+        return (jsonify({'error': {'detail':
+                                   'The email is associated to another user',
+                                   'code': ALREADY_REGISTERED_EMAIL}}), 400)
     else:
-        return (jsonify({'success': {'detail': 'The email is available', 'code': EMAIL_AVAIL}}), 200)
+        return (jsonify({'success': {'detail': 'The email is available',
+                                     'code': EMAIL_AVAIL}}), 200)
 
 
 @api.route('/maybe_like')
@@ -489,7 +518,9 @@ def suggest_leaders():
     d = {}
 
     for eachNode in myNetwork:
-        ldrs = set(map(lambda x: x['id'], json.loads(rels(eachNode)[0].data)['leaders']))
+        ldrs = set(
+            map(lambda x: x['id'], json.loads(rels(eachNode)[0].data)[
+                'leaders']))
         for eachLeader in ldrs:
             if eachLeader in myNetwork or eachLeader == g.user['id']:
                 continue
@@ -501,7 +532,10 @@ def suggest_leaders():
             followers1 = set(map(lambda x: x['id'], res['followers']))
             leaders1 = set(map(lambda x: x['id'], res['leaders']))
 
-            d[eachLeader] = (x + (len(followers1.intersection(myNetwork)) / len(followers1.union(followers))) + (len(leaders1.intersection(followers)) / len(leaders1.union(myNetwork)))) / 2.04
+            d[eachLeader] = (x + (len(followers1.intersection(myNetwork)) /
+                                  len(followers1.union(followers))) +
+                             (len(leaders1.intersection(followers)) /
+                              len(leaders1.union(myNetwork)))) / 2.04
 
     for eachNode in followers.difference(myNetwork):
         if eachNode in d:
@@ -511,7 +545,10 @@ def suggest_leaders():
         followers1 = set(map(lambda x: x['id'], res['followers']))
         leaders1 = set(map(lambda x: x['id'], res['leaders']))
 
-        d[eachNode] = (0.04 + (len(followers1.intersection(followers)) / len(followers1.union(followers))) + (len(leaders1.intersection(myNetwork)) / len(leaders1.union(myNetwork)))) / 2.04
+        d[eachNode] = (0.04 + (len(followers1.intersection(followers)) /
+                               len(followers1.union(followers))) +
+                       (len(leaders1.intersection(myNetwork)) /
+                        len(leaders1.union(myNetwork)))) / 2.04
 
     return jsonify(d)
 
