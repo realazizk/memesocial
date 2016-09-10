@@ -1,5 +1,5 @@
 from flask import Blueprint, render_template, send_from_directory, abort, session, g,\
-    jsonify
+    jsonify, request
 from functools import wraps
 import os
 from itsdangerous import Serializer
@@ -44,8 +44,9 @@ def serve_static(dire, filename):
 
 
 @frontend.route('/dashboard')
+@login_required
 def dashboard():
-    return str(g.user['id'])
+    return html_minify(render_template('dashboard.jhtml', userData=None, isLogged=True))
 
 
 @frontend.route('/profile/<int:userid>')
@@ -96,11 +97,16 @@ def serve_image(imageid):
     if status != 200:
         abort(400)
 
+    if 'modal' in request.args:
+        renderName = 'image_modal.jhtml'
+    else:
+        renderName = 'images.jhtml'
+
     myContent = loads(content.data)['success']
     # TODO: fix this hacky shit ( I need to pass all my variables since images.jhtml inherits from content.jhtml)
     return html_minify(
         render_template(
-            'images.jhtml',
+            renderName,
             isLogged=il,
             isMyContent=il and myContent['owner']['id'] == g.user['id'],
             userData=None, relations=None, myContent=myContent, isHearted=il
