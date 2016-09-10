@@ -80,9 +80,9 @@ def reg():
         query = User.select().where(
             fn.Lower(User.username) == username.lower())
         if query.exists():
-            return (jsonify(
-                {'error': {'detail': 'Someone already uses this email',
-                           'code': USED_USERNAME}}), 400)
+            return (jsonify({'error': {'detail':
+                                       'Someone already uses this email',
+                                       'code': USED_USERNAME}}), 400)
 
         User.create(
             username=username,
@@ -102,9 +102,9 @@ def login():
     username = request.json.get('username')
     password = request.json.get('password')
     if username is None or password is None:
-        return (jsonify(
-            {'error': {'detail': 'Username and/or password is none',
-                       'code': WRONG_LOGIN}}), 422)
+        return (jsonify({'error': {'detail':
+                                   'Username and/or password is none',
+                                   'code': WRONG_LOGIN}}), 422)
     try:
         user = User.get(User.username == username)
     except DoesNotExist:
@@ -147,9 +147,10 @@ def update_profile_image():
         if not query.execute():
             return (jsonify(
                 {'errors': [{'detail': 'Could not upload image'}]}), 422)
-        return (jsonify({'success': {'detail': 'Uploaded image succefully',
-                                     'image': config.SITE_URL + '/images/' +
-                                     filename}}), 200)
+        return (jsonify({'success':
+                         {'detail': 'Uploaded image succefully',
+                          'image': config.SITE_URL + '/images/' + filename}}),
+                200)
 
 
 # ugly I will turn this into a rest api, I'm doing fast dirty hacking for now.
@@ -228,12 +229,14 @@ def gcontent(cid):
         })
 
     return (jsonify({'success': {
+        'id': i.id,
         'hearters': hs,
         'commentors': cm,
         'url': i.url,
         'owner': {
             'username': i.owner.username,
-            'image_profile': i.owner.imageProfile
+            'image_profile': i.owner.imageProfile,
+            'id': i.owner.id
         }
     }}), 200)
 
@@ -312,14 +315,17 @@ def comment_on_something():
         # if image exists, foreign key exception don't seem to work
         query = Image.select().where(Image.id == contentid)
         if query.exists():
-            Comment.insert(
+            myComment = Comment.create(
                 body=comment_content,
                 date=datetime.datetime.now(),
                 usrId=g.user['id'],
-                imageId=contentid).execute()
+                imageId=contentid)
         else:
             return (jsonify({'error': 'Content does not exist'}), 404)
-        return (jsonify({'success': 'Inserted comment succefully'}))
+        return (jsonify({'success': 'Inserted comment succefully',
+                         'username': myComment.usrId.username,
+                         'id': myComment.usrId.id,
+                         'body': myComment.body}))
     else:
         return (jsonify(
             {'errors': ['Please pass a contentid and comment content']}), 400)
@@ -343,7 +349,7 @@ def user_posts(userid):
     userContent = []
     for b in bruttoData:
         userContent.append({
-            'id': b.id,
+            'content_url': config.SITE_URL + '/content/' + str(b.id),
             'url': b.url,
             'description': b.description,
             'date': b.date,
@@ -389,8 +395,8 @@ def unheart_it(contentid):
                              Heart.userId == g.user['id'])
     if not bool(e.execute()):
         return (jsonify(
-            {'error': 'You sneaky bastard you did not even heart this content'
-             }), 202)
+            {'error':
+             'You sneaky bastard you did not even heart this content'}), 202)
     return (jsonify({'success': 'Nice you unhearted this content.'}), 200)
 
 
