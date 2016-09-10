@@ -426,14 +426,9 @@ def get_news_feed():
     # Crank(x, y) = (1/(tx+1)) * Affinity(Owner(x), y)
     # Affinity(x, y) = (|| followers(x) intersection followers(y) || / 100) + (|| leaders(x) intersection leaders(y) || / 100) + (hearts(x, y)/10) + (hearts(y, x)/30)
 
-    start = int(request.args.get('start', '1'))
-    limit = int(request.args.get('limit', '10'))
-
-    # get posts of leaders from last couple of hours
     leaders = FollowerRelation.select(FollowerRelation.leader).where(
         FollowerRelation.follower == g.user['id'])
-    posts = Image.select().where(Image.owner << leaders).offset(start -
-                                                                1).limit(limit)
+    posts = Image.select().where(Image.owner << leaders)
     psts = []
 
     result = json.loads(rels(g.user['id'])[0].data)
@@ -465,8 +460,7 @@ def get_news_feed():
              (hearts(post.owner.id, g.user['id']) / 30))
         })
 
-    # nextData = Image.select().where(Image.owner << leaders).offset(start + limit - 1).limit(limit).count()
-    return (jsonify(psts), 200)
+    return (jsonify(sorted(psts, key=lambda x: x['score'], reverse=True)), 200)
 
 
 @api.route('/valid_username/<username>')
