@@ -142,3 +142,8 @@ body {
 #myBio:visited {
     colro: #fff;
 }
+
+body .file-drop-zone {
+
+    height: auto;
+}

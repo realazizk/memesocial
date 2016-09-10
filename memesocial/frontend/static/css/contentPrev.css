@@ -1,0 +1,42 @@
+.myCurrImage {
+    height: 100%;
+    background-repeat: no-repeat;
+    background-size: 100% 100%;
+}
+
+
+
+.fucking_comments {
+    overflow-y: scroll;
+    overflow-x: hidden;
+
+}
+
+.myImageContent {
+    border: #f2dede 1px solid;
+    background-color: #fff;
+}
+
+.commentImage {
+    height: 40px;
+    width: 40px;
+    border-radius: 50%;
+}
+
+#Comments .row p {
+    display: inline;
+}
+
+#Comments .row a {
+    margin-right: 5px;
+}
+
+#commentBox {
+    padding-top: 10px;
+}
+
+.btn-primary.btn-outline {
+    color: #000000;
+    border-color: #5bc0de;
+    background-color: transparent;
+}

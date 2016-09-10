@@ -92,8 +92,20 @@ def serve_image(imageid):
         il = g.user is not None
     except:
         il = False
+    content, status = apiViews.gcontent(imageid)
+    if status != 200:
+        abort(400)
 
-    # TODO: fix this hacky shit
+    myContent = loads(content.data)['success']
+    # TODO: fix this hacky shit ( I need to pass all my variables since images.jhtml inherits from content.jhtml)
     return html_minify(
         render_template(
-            'images.jhtml', isLogged=il, userData=None, relations=None))
+            'images.jhtml',
+            isLogged=il,
+            isMyContent=il and myContent['owner']['id'] == g.user['id'],
+            userData=None, relations=None, myContent=myContent, isHearted=il
+            and filter(lambda x: x['id'] == g.user['id'], myContent[
+                'hearters']) != [], isFollowing=il and filter(
+                    lambda x: x['id'] == g.user['id'], loads(
+                        apiViews.rels(myContent['owner']['id'])[0].data)[
+                            'followers'])))

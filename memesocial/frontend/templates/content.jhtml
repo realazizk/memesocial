@@ -6,6 +6,127 @@
 {% endblock %}
 
 {% block body %}
+    <script src="{{ url_for('static', filename='js/ng-infinite-scroll.min.js') }}"></script>
+
+    
+    <script src="{{ url_for('static', filename='js/jquery.colorpanel.js') }}"></script>
+    
+    <script>
+
+     $(document).ready(function () {
+	 a = $('.myRow');
+	 a.css('padding-top', ($('.imgCover').height()/2) - (a.height()/2));
+
+     });
+     
+     function uploadItBaby() {
+	 var form = $('#imgUpload')[0];
+	 var formData = new FormData(form);
+
+	 $.ajax({
+	     type: "POST",
+	     url: '/api/update_profile_image',
+	     data: formData,
+
+	     // THIS MUST BE DONE FOR FILE UPLOADING
+	     contentType: false,
+	     processData: false,
+	     success: function(data) {
+		 console.log(data.success.image);
+		 $('#theAvatar').css('background-image', 'url(' + data.success.image + ')');
+             },
+	 })
+     };
+     
+     $(function() {
+         $(".hearty").on("click", function() {
+             $(this).toggleClass("is-active");
+         });
+     });
+     var myApp = angular.module('myApp', ['infinite-scroll', 'xeditable', 'ngSanitize']);
+     
+     myApp.controller('myController', function($scope, MemeSocial) {
+         $scope.meme = new MemeSocial();
+     });
+
+     // Because I use angularjs with jinja2
+     myApp.config(['$interpolateProvider', function($interpolateProvider) {
+         $interpolateProvider.startSymbol('{a');
+         $interpolateProvider.endSymbol('a}');
+     }]);
+     
+     myApp.factory('MemeSocial', function($http) {
+         var Meme = function() {
+             this.items = [];
+             this.busy = false;
+             this.after = '';
+             this.nextUrl = "/api/user_posts/{{ userid}}?limit=3";
+         };
+         Meme.prototype.nextPage = function() {
+             if (this.busy) return;
+             this.busy = true;
+             var url = this.nextUrl;
+             $http.get(url).success(function(data) {
+                 this.nextUrl = data.next;
+                 console.log(this.nextUrl);
+                 var items = data.data;
+                 for (var i = 0; i < items.length; i++) {
+                     this.items.push(items[i]);
+                 }
+                 this.busy = false;
+             }.bind(this));
+         };
+         return Meme;
+     });
+
+     myApp.run(function(editableOptions) {
+	 editableOptions.theme = 'bs3';
+     });
+
+     myApp.controller('Ctrl', function($scope, $http) {
+	 $scope.user = {
+	     desc: '{{ userData.bio|e }}'
+	 };
+	 
+	 $scope.updateUser = function(data) {
+	     return $http.post('/api/update_bio', {bio: data});
+	 };
+
+     });
+
+
+     myApp.controller('menuController', function ($scope, $http, $window) {
+	 $scope.loggedIn = {% if il %} true {% else %} false {% endif %};
+	 $scope.logout = function () {
+	     $http.get('/api/logout')
+		  .success(function (data, status){
+		      $scope.loggedIn = false;
+		      $window.location.reload();
+		  });
+	 };
+     });
+
+     myApp.controller('loginController', function ($scope, $http, $window) {
+	 $scope.username = "";
+	 $scope.password = "";
+	 $scope.message = "";
+	 $scope.logMeIn = function () {
+	     $http.post('/api/login', {
+		 username: $scope.username,
+		 password: $scope.password
+	     },{
+		 headers: { 'Content-Type': 'application/json'}
+	     })
+		  .success(function (data, status) {
+		      $window.location.reload();
+		  })
+		  .error(function (data, status){
+		      $scope.message = data.error.detail;
+		  });
+	 }
+     });
+     
+    </script>
     <nav  ng-controller="menuController" style="background: #fff;" class="navbar navbar-default navbar-fixed-top">
 	<div class="container">
 	    
@@ -21,9 +142,6 @@
 	    <form>
 		<input id="search-bar" type="search" placeholder="Search">
 	    </form>
-
-
-	    
 	    
 	    <div class="nav navbar-nav navbar-right">
 		{% if not isLogged %}
@@ -44,6 +162,26 @@
 	
     {% endblock %}
 
-    <script src="{{ url_for('static', filename='js/ng-infinite-scroll.min.js') }}"></script>
+    <script>
+     $('#colorPanel').ColorPanel({
+         styleSheet: '#duh'
+         , animateContainer: '#duh'
+         , colors: ['#45ce49', '#03A9F4', '#EC407A', '#c62828', '#607D8B', '#FFEB3B']
+	 
+     });
+     
+    </script>
+    
+    {% include 'loginPopup.jhtml' %}
+    {% include 'upload.jhtml' %}
+    
+    
+    <footer class="footer" style="margin-top: 20px; background-color: #fff; text-align: center">
+	<div class="container">
+            <p class="text-muted" style="margin: 20px 0; color: #777"  >memesocial.com is developed by Mohamed Aziz Knani as a side project for fun in september 2016.</p>
+	</div>
+    </footer>
     
 {% endblock %}
+
+

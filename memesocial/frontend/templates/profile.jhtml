@@ -8,32 +8,28 @@
     <link href="{{ url_for('static', filename='css/upPop.css') }}" rel="stylesheet"/>
 {% endblock %}
 {% block content %}
-
-    {% if myPage %}    
-	<div id="colorPanel" class="colorPanel">
+    {% if myPage %}
+        <div id="colorPanel" class="colorPanel">
             <a id="cpToggle" href="#"></a>
             <ul></ul>
-	</div>
+        </div>
     {% endif %}
-
     <div id="duh" style="background-color: {{ userData.color }}" class="imgCover">
         <div class="container">
             <div class="row myRow" style="color: #fff">
                 <div class="col-xs-2">
                     <div class="row">
                         <div class="col-xs-12">
-			    {% if myPage %}
-				<form id="imgUpload" action="/api/update_profile_image" method="POST" enctype="multipart/form-data">
-				    <label for="file-input" style="display: block; cursor: pointer">
-			    {% endif %}
-			    <div id="theAvatar" class="circle-avatar" style="background-image: url('{{ userData.profile_image }}')"></div>
-			    {% if myPage %}
-				    </label>
-				    <input name="file-input" id="file-input" style="display: none;"  type="file" accept="image/*"  onchange="uploadItBaby();"/>
-
-				</form>
-			    {% endif %}
-			    
+                            {% if myPage %}
+                                <form id="imgUpload" action="/api/update_profile_image" method="POST" enctype="multipart/form-data">
+                                    <label for="file-input" style="display: block; cursor: pointer">
+                            {% endif %}
+                            <div id="theAvatar" class="circle-avatar" style="background-image: url('{{ userData.profile_image }}')"></div>
+                            {% if myPage %}
+                                    </label>
+                                    <input name="file-input" id="file-input" style="display: none;"  type="file" accept="image/*"  onchange="uploadItBaby();"/>
+                                </form>
+                            {% endif %}
                         </div>
                     </div>
                 </div>
@@ -48,14 +44,13 @@
                         <div class="col-xs-12">
                             <div class="bio">
                                 {% if myPage %}
-				    <div ng-controller="Ctrl">
-					<a href="#"  id="myBio" ng-bind-html="user.desc || 'Edit bio'"  editable-textarea="user.desc" e-rows="3" e-cols="40"  onbeforesave="updateUser($data)">
-
-					</a>
-				    </div>
-				{% else %}
-				    {{ userData.bio }}
-				{% endif %}
+                                    <div ng-controller="Ctrl">
+                                        <a href="#"  id="myBio" ng-bind-html="user.desc || 'Edit bio'"  editable-textarea="user.desc" e-rows="3" e-cols="40"  onbeforesave="updateUser($data)">
+                                        </a>
+                                    </div>
+                                {% else %}
+                                    {{ userData.bio }}
+                                {% endif %}
                             </div>
                         </div>
                     </div>
@@ -83,113 +78,26 @@
         </div>
     </div>
     <div ng-controller='myController' id="myContent" class="container-fluid">
-	<div id="space" style="margin-top: 50px;"></div>
-	<div infinite-scroll='meme.nextPage()' infinite-scroll-disabled='meme.busy' infinite-scroll-distance='1'>
-
-	    <div ng-repeat='item in meme.items'>
-		<div class="col-md-4">
-		    <div class="imgs vertical-center" style="background-color: #fff; background-image: url('{a item.url  a}')">
-			<div class="kk">
-			    
+        <div id="space" style="margin-top: 50px;"></div>
+        <div infinite-scroll='meme.nextPage()' infinite-scroll-disabled='meme.busy' infinite-scroll-distance='1'>
+            <div ng-repeat='item in meme.items'>
+                <div class="col-md-4">
+		    <a href="{a item.content_url  a}">
+			<div  class="imgs vertical-center" style="background-color: #fff; background-image: url('{a item.url  a}')">
+                            <div class="kk">
+                            </div>
+                            <div class="opt">
+				<i class="fa fa-heart" aria-hidden="true"></i> {a item.hearts a}&nbsp;&nbsp;
+				<i class="fa fa-comment" aria-hidden="true"></i> {a item.comments a}
+                            </div>
 			</div>
-			
-			<div class="opt">
-			    <i class="fa fa-heart" aria-hidden="true"></i> {a item.hearts a}&nbsp;&nbsp;&nbsp;&nbsp;
-			    <i class="fa fa-comment" aria-hidden="true"></i> {a item.comments a}
-			</div>
-
-			
-		    </div>
-		</div>
-	    </div>
-	</div>
+		    </a>
+                </div>
+            </div>
+        </div>
     </div>
     
-    {% include 'loginPopup.jhtml' %}
-    
-    {% include 'upload.jhtml' %}
-    
-    <script src="{{ url_for('static', filename='js/jquery.colorpanel.js') }}"></script>
-    
     <script>
-     a = $('.myRow');
-     a.css('padding-top', ($('.imgCover').height()/2) - (a.height()/2));
-
-     function uploadItBaby() {
-	 var form = $('#imgUpload')[0];
-	 var formData = new FormData(form);
-
-	 $.ajax({
-	     type: "POST",
-	     url: '/api/update_profile_image',
-	     data: formData,
-
-	     // THIS MUST BE DONE FOR FILE UPLOADING
-	     contentType: false,
-	     processData: false,
-	     success: function(data) {
-		 console.log(data.success.image);
-		 $('#theAvatar').css('background-image', 'url(' + data.success.image + ')');
-             },
-	 })
-     };
-     
-     $(function() {
-         $(".hearty").on("click", function() {
-             $(this).toggleClass("is-active");
-         });
-     });
-     var myApp = angular.module('myApp', ['infinite-scroll', 'xeditable', 'ngSanitize']);
-     
-     myApp.controller('myController', function($scope, MemeSocial) {
-         $scope.meme = new MemeSocial();
-     });
-
-     // Because I use angularjs with jinja2
-     myApp.config(['$interpolateProvider', function($interpolateProvider) {
-         $interpolateProvider.startSymbol('{a');
-         $interpolateProvider.endSymbol('a}');
-     }]);
-     
-     myApp.factory('MemeSocial', function($http) {
-         var Meme = function() {
-             this.items = [];
-             this.busy = false;
-             this.after = '';
-             this.nextUrl = "/api/user_posts/{{ userid}}?limit=3";
-         };
-         Meme.prototype.nextPage = function() {
-             if (this.busy) return;
-             this.busy = true;
-             var url = this.nextUrl;
-             $http.get(url).success(function(data) {
-                 this.nextUrl = data.next;
-                 console.log(this.nextUrl);
-                 var items = data.data;
-                 for (var i = 0; i < items.length; i++) {
-                     this.items.push(items[i]);
-                 }
-                 this.busy = false;
-             }.bind(this));
-         };
-         return Meme;
-     });
-
-     myApp.run(function(editableOptions) {
-	 editableOptions.theme = 'bs3';
-     });
-
-     myApp.controller('Ctrl', function($scope, $http) {
-	 $scope.user = {
-	     desc: '{{ userData.bio|e }}'
-	 };
-	 
-	 $scope.updateUser = function(data) {
-	     return $http.post('/api/update_bio', {bio: data});
-	 };
-
-     });
-
      myApp.controller('followController', function ($scope, $http){
 	 $scope.fButt = {% if isFollowing %} true {% else  %} false {% endif %};
 
@@ -211,42 +119,7 @@
 	 }
      });
 
-     myApp.controller('menuController', function ($scope, $http, $window) {
-	 $scope.loggedIn = {% if il %} true {% else %} false {% endif %};
-	 $scope.logout = function () {
-	     $http.get('/api/logout')
-		  .success(function (data, status){
-		      $scope.loggedIn = false;
-		      $window.location.reload();
-		  });
-	 };
-     });
 
-     myApp.controller('loginController', function ($scope, $http, $window) {
-	 $scope.username = "";
-	 $scope.password = "";
-	 $scope.message = "";
-	 $scope.logMeIn = function () {
-	     $http.post('/api/login', {
-		 username: $scope.username,
-		 password: $scope.password
-	     },{
-		 headers: { 'Content-Type': 'application/json'}
-	     })
-		  .success(function (data, status) {
-		      $window.location.reload();
-		  })
-		  .error(function (data, status){
-		      $scope.message = data.error.detail;
-		  });
-	 }
-     });
-     
-     $('#colorPanel').ColorPanel({
-         styleSheet: '#duh'
-         , animateContainer: '#duh'
-         , colors: ['#45ce49', '#03A9F4', '#EC407A', '#c62828', '#607D8B', '#FFEB3B']
-	 
-     });
     </script>
+    
 {% endblock %}

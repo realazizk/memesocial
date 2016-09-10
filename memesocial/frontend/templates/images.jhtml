@@ -7,6 +7,172 @@
     <link href="https://fonts.googleapis.com/css?family=Open+Sans" rel="stylesheet">
     <link href="{{ url_for('static', filename='css/logPop.css') }}" rel="stylesheet"/>
     <link href="{{ url_for('static', filename='css/upPop.css') }}" rel="stylesheet"/>
+    <link href="{{ url_for('static', filename='css/contentPrev.css') }}" rel="stylesheet"/>
 {% endblock %}
 
+{% block content %}
+    <div class="container">
+	
+	<div style="margin-top:100px"></div>
+	<div class="row myImageContent" ng-controller="heartController">
+	    <div id="myColumnImage" class="col-md-8 myCurrImage" style="background-image: url('{{ myContent.url }}')">
+		
+	    </div>
+	    
+	    <div class="col-md-4">
+		<div id="myUpperContent">
+		    
+		    <div class="row" style="margin-top: 20px;display: flex; align-items: center;">
+			<div class="col-md-8">
+			    <a href="/profile/{{ myContent.owner.id }}">
+				<img
+style="border-radius:50%;    background-position-y: center;background-position-x: center;background-repeat: no-repeat;background-size: cover; height: 50px; width: 50px;"
+alt="userProfileImage" src="{{ myContent.owner.image_profile }}?thumbnail"/>
+			    </a>
 
+			    <a href="/profile/{{ myContent.owner.id }}">
+				<div style="margin-left: 5px ; display: inline-block">
+				    {{ myContent.owner.username }}
+				</div>
+			    </a>
+			</div>
+
+			<div class="col-md-4" ng-controller="followController">
+			    <a class="btn btn-block btn-primary btn-outline" {% if isMyContent %} style="visibility: hidden" {% endif %}    {% if not isLogged %} data-toggle="modal" data-target="#login-modal" {% endif %} ng-click="doIt();">{a fButt ? 'Unfollow': 'Follow'  a}</a>
+			</div>
+			
+		    </div>
+
+		    <div style="height: 1px; width: 100%; background-color: #ddd; margin-top: 10px; margin-bottom:10px"></div>
+		    
+		    <div class="row" style="margin-bottom: 10px;">
+			<div class="col-md-4">
+			     {a heartnb a}  <i class="fa fa-heart-o" aria-hidden="true"></i>
+			</div>
+
+			<div class="col-md-8" style="text-align: right" >
+			    <a href="" ng-click="doIt();">
+				{a hButt ? 'Unheart it!': 'Heart it!'  a}
+			    </a>		   
+			</div>
+		    </div>
+		    
+		</div>
+
+		<div ng-controller="commentController">
+		    <div id="Comments" class="fucking_comments">
+			<div class="row" style="margin-left: 10px; margin-right: 10px" ng-repeat="comment in comments">
+			    <a href="/profile/{a comment.userid  a}">{a comment.username  a}</a>
+			    <p>{a comment.body a}</p>
+			</div>		    
+		    </div>
+		    
+		    <div class="row" id="commentBox">
+			<div class="col-xs-8">
+			    <div class="form-group">
+				<textarea ng-model="commentContent"  placeholder="Say something!" class="form-control" rows="1"></textarea>
+			    </div>
+			</div>
+			<div class="col-xs-4">
+			    <button type="button" class="btn btn-primary" style="width: 100%;" ng-click="commentOnIt();">Comment!</button>
+			</div>
+		    </div>
+		</div>
+		
+	    </div>
+	</div>
+
+    </div>
+
+    <script>
+     $('#Comments').css('height',
+			($('#myColumnImage').css('height').replace('px', '') -
+			 $('#myUpperContent').css('height').replace('px', '')- 30 - $('#commentBox').css('height').replace('px', '')) + 'px'
+     );
+     
+     myApp.controller('heartController', function ($scope, $http){
+	 $scope.hButt = {% if isHearted %} true {% else  %} false {% endif %};
+	 $scope.heartnb = {{ myContent.hearters|length }};
+	 
+	 $scope.doIt = function () {
+	     if (!$scope.hButt) {
+		 $http.get('/api/heartit/' + {{ myContent.id }}).success(function () {
+		     $scope.hButt = !$scope.hButt;
+		     $scope.heartnb += 1;
+		 })
+		      .error(function (data, status) {
+			  if (status === 405) {
+			      $('#login-modal').modal();
+			  }
+			  
+		      });
+	     } else {
+		 $http.get('/api/unheartit/' + {{ myContent.id }}).success(function () {
+		     $scope.hButt = !$scope.hButt;
+		     $scope.heartnb -= 1;
+		 });
+	     }
+	 }
+     });
+
+     myApp.controller('commentController', function ($scope, $http) {
+	 $scope.commentContent = '';
+
+	 $scope.comments = [];
+
+	 // get this from the backend
+	 {% for commentor in myContent.commentors %}$scope.comments.push({
+	     username: '{{ commentor.username }}',
+	     body: '{{  commentor.body}}',
+	     userid: {{ commentor.id }}
+	 });{% endfor %}
+	 console.log();
+	 $scope.commentOnIt  = function () {
+	     $http.post('/api/comment', {
+		 content_id: {{ myContent.id }},
+		 comment_content: $scope.commentContent
+	     },{
+		 headers: { 'Content-Type': 'application/json'}
+	     })
+		  .success(function (data, status) {
+		      $scope.comments.push({
+			  username: data.username,
+			  body: data.body,
+			  userid: data.id
+		      });
+
+		      // reinit it again
+		      $scope.commentContent = '';
+		  })
+		  .error(function (data, status) {
+		      if (status === 405) {
+			  // show the modal
+			  $('#login-modal').modal();
+		      }
+		  });
+	 };
+     });
+     
+     myApp.controller('followController', function ($scope, $http){
+	 $scope.fButt = {% if isFollowing %} true {% else  %} false {% endif %};
+
+	 $scope.followers = {{ relations.followers|length }};
+	 $scope.leaders = {{ relations.leaders|length }};
+	 
+	 $scope.doIt = function () {
+	     if (!$scope.fButt) {
+		 $http.get('/api/follow/' + {{ myContent.owner.id }}).success(function () {
+		     $scope.fButt = !$scope.fButt;
+		     $scope.followers += 1;
+		 });
+	     } else {
+		 $http.get('/api/unfollow/' + {{ myContent.owner.id }}).success(function () {
+		     $scope.fButt = !$scope.fButt;
+		     $scope.followers -= 1;
+		 });
+	     }
+	 }
+     });
+
+    </script>
+{% endblock %}
