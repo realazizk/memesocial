@@ -1,60 +1,56 @@
 {% extends "base.jhtml" %}
-
 {% block head %}
     <link href="http://fonts.googleapis.com/earlyaccess/droidsansethiopic.css" rel="stylesheet"/>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-fileinput/4.3.4/css/fileinput.min.css" rel="stylesheet"/>
 {% endblock %}
-
 {% block body %}
     <script src="{{ url_for('static', filename='js/ng-infinite-scroll.min.js') }}"></script>
-
-    
     <script src="{{ url_for('static', filename='js/jquery.colorpanel.js') }}"></script>
-    
     <script>
-
      $(document).ready(function () {
-	 a = $('.myRow');
-	 a.css('padding-top', ($('.imgCover').height()/2) - (a.height()/2));
-
+         a = $('.myRow');
+         a.css('padding-top', ($('.imgCover').height()/2) - (a.height()/2));
      });
-     
      function uploadItBaby() {
-	 var form = $('#imgUpload')[0];
-	 var formData = new FormData(form);
-
-	 $.ajax({
-	     type: "POST",
-	     url: '/api/update_profile_image',
-	     data: formData,
-
-	     // THIS MUST BE DONE FOR FILE UPLOADING
-	     contentType: false,
-	     processData: false,
-	     success: function(data) {
-		 console.log(data.success.image);
-		 $('#theAvatar').css('background-image', 'url(' + data.success.image + ')');
+         var form = $('#imgUpload')[0];
+         var formData = new FormData(form);
+         $.ajax({
+             type: "POST",
+             url: '/api/update_profile_image',
+             data: formData,
+             // THIS MUST BE DONE FOR FILE UPLOADING
+             contentType: false,
+             processData: false,
+             success: function(data) {
+                 console.log(data.success.image);
+                 $('#theAvatar').css('background-image', 'url(' + data.success.image + ')');
              },
-	 })
+         })
      };
-     
      $(function() {
          $(".hearty").on("click", function() {
              $(this).toggleClass("is-active");
          });
      });
      var myApp = angular.module('myApp', ['infinite-scroll', 'xeditable', 'ngSanitize']);
-     
-     myApp.controller('myController', function($scope, MemeSocial) {
+     myApp.controller('myController', function($scope, $compile, $http, MemeSocial) {
          $scope.meme = new MemeSocial();
-     });
 
+	 /* $scope.showMeTheModal = function () {
+
+	    $http.get('/content/6?modal')
+	    .success(function (data, status) {
+	    $compile(data)($scope);
+	    });
+	    $('#content-show-modal').modal();
+	    }*/
+	 
+     });
      // Because I use angularjs with jinja2
      myApp.config(['$interpolateProvider', function($interpolateProvider) {
          $interpolateProvider.startSymbol('{a');
          $interpolateProvider.endSymbol('a}');
      }]);
-     
      myApp.factory('MemeSocial', function($http) {
          var Meme = function() {
              this.items = [];
@@ -78,110 +74,104 @@
          };
          return Meme;
      });
-
      myApp.run(function(editableOptions) {
-	 editableOptions.theme = 'bs3';
+         editableOptions.theme = 'bs3';
      });
-
      myApp.controller('Ctrl', function($scope, $http) {
-	 $scope.user = {
-	     desc: '{{ userData.bio|e }}'
-	 };
-	 
-	 $scope.updateUser = function(data) {
-	     return $http.post('/api/update_bio', {bio: data});
-	 };
-
+         $scope.user = {
+             desc: '{{ userData.bio|e }}'
+         };
+         $scope.updateUser = function(data) {
+             return $http.post('/api/update_bio', {bio: data});
+         };
      });
-
-
      myApp.controller('menuController', function ($scope, $http, $window) {
-	 $scope.loggedIn = {% if il %} true {% else %} false {% endif %};
-	 $scope.logout = function () {
-	     $http.get('/api/logout')
-		  .success(function (data, status){
-		      $scope.loggedIn = false;
-		      $window.location.reload();
-		  });
-	 };
+         $scope.loggedIn = {% if il %} true {% else %} false {% endif %};
+         $scope.logout = function () {
+             $http.get('/api/logout')
+                  .success(function (data, status){
+                      $scope.loggedIn = false;
+                      $window.location.reload();
+                  });
+         };
      });
-
      myApp.controller('loginController', function ($scope, $http, $window) {
-	 $scope.username = "";
-	 $scope.password = "";
-	 $scope.message = "";
-	 $scope.logMeIn = function () {
-	     $http.post('/api/login', {
-		 username: $scope.username,
-		 password: $scope.password
-	     },{
-		 headers: { 'Content-Type': 'application/json'}
-	     })
-		  .success(function (data, status) {
-		      $window.location.reload();
-		  })
-		  .error(function (data, status){
-		      $scope.message = data.error.detail;
-		  });
-	 }
+         $scope.username = "";
+         $scope.password = "";
+         $scope.message = "";
+         $scope.logMeIn = function () {
+             $http.post('/api/login', {
+                 username: $scope.username,
+                 password: $scope.password
+             },{
+                 headers: { 'Content-Type': 'application/json'}
+             })
+                  .success(function (data, status) {
+                      $window.location.reload();
+                  })
+                  .error(function (data, status){
+                      $scope.message = data.error.detail;
+                  });
+         }
      });
      
     </script>
-    <nav  ng-controller="menuController" style="background: #fff;" class="navbar navbar-default navbar-fixed-top">
-	<div class="container">
-	    
-	    <div class="nav navbar-nav navbar-left">
-		<div class="navbar-header">
-		    <a class="navbar-brand" href="/">
-			Memesocial
-		    </a>
+    {% block navbar %}
+	<nav  ng-controller="menuController" style="background: #fff;" class="navbar navbar-default navbar-fixed-top">
+            <div class="container">
+		<div class="nav navbar-nav navbar-left">
+                    <div class="navbar-header">
+			<a class="navbar-brand" href="/">
+                            Memesocial
+			</a>
+                    </div>
 		</div>
-
-	    </div>
-	    
-	    <form>
-		<input id="search-bar" type="search" placeholder="Search">
-	    </form>
-	    
-	    <div class="nav navbar-nav navbar-right">
-		{% if not isLogged %}
-		    <button style="background: #fff;" type="button" class="btn btn-default butts" data-toggle="modal" data-target="#login-modal">Login</button>
-		{% else %}
-		    <button style="height: 33px;
-				   background: #45ce49;
-				   margin-right: 4px;
-				   color: #fff;"  data-toggle="modal" data-target="#upload-modal" type="button" class="btn btn-default butts"><span class="glyphicon glyphicon-pencil"></span></button>
-		    
-		    <button  ng-click="logout();" style="background: #fff;" id="logoutButt" type="button" class="btn btn-default butts"><span class="glyphicon glyphicon-log-in"></span> Logout</button>
-		{% endif %}
-	    </div>
-	</div>
-    </nav>
-
-    {% block content %}
-	
+		<form>
+                    <input id="search-bar" type="search" placeholder="Search">
+		</form>
+		<div class="nav navbar-nav navbar-right">
+                    {% if not isLogged %}
+			<button style="background: #fff;" type="button" class="btn btn-default butts" data-toggle="modal" data-target="#login-modal">Login</button>
+                    {% else %}
+			<button style="height: 33px;
+                                       background: #45ce49;
+                                       margin-right: 4px;
+                                       color: #fff;"  data-toggle="modal" data-target="#upload-modal" type="button" class="btn btn-default butts"><span class="glyphicon glyphicon-pencil"></span></button>
+			<button  ng-click="logout();" style="background: #fff;" id="logoutButt" type="button" class="btn btn-default butts"><span class="glyphicon glyphicon-log-in"></span> Logout</button>
+                    {% endif %}
+		</div>
+            </div>
+	</nav>
     {% endblock %}
 
+    {% block content %}
+    {% endblock %}
     <script>
      $('#colorPanel').ColorPanel({
          styleSheet: '#duh'
          , animateContainer: '#duh'
          , colors: ['#45ce49', '#03A9F4', '#EC407A', '#c62828', '#607D8B', '#FFEB3B']
-	 
      });
-     
     </script>
-    
     {% include 'loginPopup.jhtml' %}
     {% include 'upload.jhtml' %}
+
+    {% block footer %}
+	<footer id="footer" class="footer" style="margin-top: 20px; background-color: #fff; text-align: center">
+            <div class="container">
+		<p class="text-muted" style="margin: 20px 0; color: #777"  >memesocial.com is developed by Mohamed Aziz Knani as a side project for fun in september 2016.</p>
+            </div>
+	</footer>
+    {% endblock %}
     
-    
-    <footer class="footer" style="margin-top: 20px; background-color: #fff; text-align: center">
-	<div class="container">
-            <p class="text-muted" style="margin: 20px 0; color: #777"  >memesocial.com is developed by Mohamed Aziz Knani as a side project for fun in september 2016.</p>
-	</div>
-    </footer>
-    
+    <script>
+     $(document).ready(function() {
+         var docHeight = $(window).height();
+         var footerHeight = $('#footer').height();
+         var footerTop = $('#footer').position().top + footerHeight;
+         if (footerTop < docHeight) {
+             $('#footer').css('margin-top', 10+ (docHeight - footerTop) + 'px');
+         }
+     });
+    </script>
 {% endblock %}
-
-

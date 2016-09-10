@@ -1,0 +1,60 @@
+{% extends "content.jhtml" %}
+
+{% block head %}
+    <link href=" {{ url_for('static', filename='css/cssProfile.css') }}" rel="stylesheet"/>
+    <link href=" {{ url_for('static', filename='css/jquery.colorpanel.css') }}" rel="stylesheet"/>
+    <link href="https://fonts.googleapis.com/css?family=Open+Sans" rel="stylesheet">
+    <link href="{{ url_for('static', filename='css/logPop.css') }}" rel="stylesheet"/>
+    <link href="{{ url_for('static', filename='css/upPop.css') }}" rel="stylesheet"/>
+    <link href="{{ url_for('static', filename='css/contentPrev.css') }}" rel="stylesheet"/>
+    <link href="{{ url_for('static', filename='css/dash.css') }}" rel="stylesheet"/>
+{% endblock %}
+{% block content %}
+
+    <div ng-controller="userFeedController" class="container" id="userFeed" >
+	<div  ng-init="initIt();">
+	    <div class="feedcontent" ng-repeat='item in firsElements'>
+                <div class="row">
+		    <div class="col-md-4">
+                        <img  class="userAvatar" alt=""  src="{a item.oimg a}"/>
+                        <a style="margin-left: 10px;" href="#">moonflock</a>
+		    </div>
+                </div>
+                <img alt="" style="width: 100%;" src="{a item.url  a}"/>
+	    </div>
+	    
+            <div infinite-scroll='loadMore()' infinite-scroll-distance='1'>
+		<div class="feedcontent" ng-repeat='item in items'>
+                    <div class="row">
+			<div class="col-md-4">
+                            <img  class="userAvatar" alt=""  src="{a item.oimg a}"/>
+                            <a style="margin-left: 10px;" href="#">moonflock</a>
+			</div>
+                    </div>
+                    <img alt="" style="width: 100%;" src="{a item.url  a}"/>
+		</div>
+            </div>
+	</div>
+    </div>
+    {% block footer %}
+    {% endblock %}
+    
+    <script>
+     myApp.controller('userFeedController', function ($scope, $http) {
+         $scope.initIt = function () {
+             $http.get('/api/news_feed')
+		  .success(function (data, status){
+                      $scope.allItems = data;
+		      $scope.firsElements = $scope.allItems.splice(0, 2);
+		  });
+         };
+         $scope.items = [];
+         $scope.loadMore = function () {
+             if ($scope.allItems.length>0) {
+                 $scope.items = $scope.items.concat($scope.allItems.splice(0,1));
+                 console.log($scope.allItems);
+             }
+         };
+     });
+    </script>
+{% endblock %}

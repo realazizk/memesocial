@@ -1,0 +1,95 @@
+{% extends "content.jhtml" %}
+
+{% block head %}
+    <link href=" {{ url_for('static', filename='css/cssProfile.css') }}" rel="stylesheet"/>
+    <link href=" {{ url_for('static', filename='css/jquery.colorpanel.css') }}" rel="stylesheet"/>
+    <link href="https://fonts.googleapis.com/css?family=Open+Sans" rel="stylesheet">
+    <link href="{{ url_for('static', filename='css/logPop.css') }}" rel="stylesheet"/>
+    <link href="{{ url_for('static', filename='css/upPop.css') }}" rel="stylesheet"/>
+    <link href="{{ url_for('static', filename='css/contentPrev.css') }}" rel="stylesheet"/>
+{% endblock %}
+
+{% block content %}
+
+    {% block loadjs%} {% endblock %}
+    
+    {# ugly hack but fuck it works#}
+    {% block navbar %} {% endblock %}
+    
+    <div>
+	
+	<div class="row myImageContent" ng-controller="heartController">
+	    <div id="myColumnImage" class="col-md-8 myCurrImage" style="background-image: url('{{ myContent.url }}')">
+		
+	    </div>
+	    
+	    <div class="col-md-4">
+		<div id="myUpperContent">
+		    
+		    <div class="row" style="margin-top: 20px;display: flex; align-items: center;">
+			<div class="col-md-8">
+			    <a href="/profile/{{ myContent.owner.id }}">
+				<img
+				    style="border-radius:50%;    background-position-y: center;background-position-x: center;background-repeat: no-repeat;background-size: cover; height: 50px; width: 50px;"
+				    alt="userProfileImage" src="{{ myContent.owner.image_profile }}?thumbnail"/>
+			    </a>
+
+			    <a href="/profile/{{ myContent.owner.id }}">
+				<div style="margin-left: 5px ; display: inline-block">
+				    {{ myContent.owner.username }}
+				</div>
+			    </a>
+			</div>
+
+			<div class="col-md-4" ng-controller="followController">
+			    <a class="btn btn-block btn-primary btn-outline" {% if isMyContent %} style="visibility: hidden" {% endif %}    {% if not isLogged %} data-toggle="modal" data-target="#login-modal" {% endif %} ng-click="doIt();">{a fButt ? 'Unfollow': 'Follow'  a}</a>
+			</div>
+			
+		    </div>
+
+		    <div style="height: 1px; width: 100%; background-color: #ddd; margin-top: 10px; margin-bottom:10px"></div>
+		    
+		    <div class="row" style="margin-bottom: 10px;">
+			<div class="col-md-4">
+			    {a heartnb a}  <i class="fa fa-heart-o" aria-hidden="true"></i>
+			</div>
+
+			<div class="col-md-8" style="text-align: right" >
+			    <a href="" ng-click="doIt();">
+				{a hButt ? 'Unheart it!': 'Heart it!'  a}
+			    </a>		   
+			</div>
+		    </div>
+		    
+		</div>
+
+		<div ng-controller="commentController">
+		    <div id="Comments" class="fucking_comments">
+			<div class="row" style="margin-left: 10px; margin-right: 10px" ng-repeat="comment in comments">
+			    <a href="/profile/{a comment.userid  a}">{a comment.username  a}</a>
+			    <p>{a comment.body a}</p>
+			</div>		    
+		    </div>
+		    
+		    <div class="row" id="commentBox">
+			<div class="col-xs-8">
+			    <div class="form-group">
+				<textarea ng-model="commentContent"  placeholder="Say something!" class="form-control" rows="1"></textarea>
+			    </div>
+			</div>
+			<div class="col-xs-4">
+			    <button type="button" class="btn btn-primary" style="width: 100%;" ng-click="commentOnIt();">Comment!</button>
+			</div>
+		    </div>
+		</div>
+		
+	    </div>
+	</div>
+
+    </div>
+
+    {# yeah fuck this #}
+    {% block footer %}
+    {% endblock %}
+    
+{% endblock %}

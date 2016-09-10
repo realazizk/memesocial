@@ -7,7 +7,16 @@
     <link href="{{ url_for('static', filename='css/logPop.css') }}" rel="stylesheet"/>
     <link href="{{ url_for('static', filename='css/upPop.css') }}" rel="stylesheet"/>
 {% endblock %}
+
+
+
 {% block content %}
+
+{#    <div class="modal fade" id="content-show-modal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" style="display: none;">
+	
+    </div> #}
+
+    
     {% if myPage %}
         <div id="colorPanel" class="colorPanel">
             <a id="cpToggle" href="#"></a>
@@ -82,7 +91,7 @@
         <div infinite-scroll='meme.nextPage()' infinite-scroll-disabled='meme.busy' infinite-scroll-distance='1'>
             <div ng-repeat='item in meme.items'>
                 <div class="col-md-4">
-		    <a href="{a item.content_url  a}">
+		    <a href="{a item.content_url a}">
 			<div  class="imgs vertical-center" style="background-color: #fff; background-image: url('{a item.url  a}')">
                             <div class="kk">
                             </div>
@@ -121,5 +130,5 @@
 
 
     </script>
-    
+
 {% endblock %}
