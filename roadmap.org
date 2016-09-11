@@ -6,7 +6,6 @@
   4) Make my app structure.
   5) Download bootstrap, underscore js, jquery and fontawesome.
   6) Setup my emacs to use jinja2 when I open my html files.
-
 * TODO Study the project
   DEADLINE: <2016-08-28 Sun>
   1) study the project on paper.

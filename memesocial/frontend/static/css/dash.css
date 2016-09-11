@@ -1,5 +1,4 @@
 #userFeed {
-    margin-top: 50px;
     padding-left: 20%;
     padding-right: 20%;
 }
@@ -18,4 +17,23 @@
 
 .feedcontent .row {
     margin : 10px;
+}
+
+#suggestFollowers .userThumb {
+    height: 40px;
+    width: 40px;
+}
+
+#suggestFollowers {
+    max-height: 300px;
+    overflow-y: scroll;
+}
+
+#suggestFollowers .userLink {
+    margin-left: 10px;
+    font-size: 1.1em;
+}
+
+#suggestFollowers .followButton {
+    border-radius: 0px;
 }

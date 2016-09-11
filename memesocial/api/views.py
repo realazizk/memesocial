@@ -45,6 +45,7 @@ def remove_if_invalid(response):
     return response
 
 
+# No I won't remove this from my tests
 @api.route('/hello')
 def hello():
     return 'Hello Mohamed'
@@ -453,6 +454,7 @@ def get_news_feed():
             'description': post.description,
             'ouser': post.owner.username,
             'oimg': post.owner.imageProfile,
+            'oid': post.owner.id,
             'score': 0.1 + (1 / (minutesElapsed[0] + 1)) *
             (((len(iFollowers.intersection(lFollower)) / 100) +
               (len(iLeader.intersection(lLeader)) / 100)) +
@@ -503,6 +505,8 @@ def valid_email(email):
 @login_required
 def suggest_leaders():
     import json
+    import bisect
+
     # My dumb algorithm, for liklyhood calculations, this is very dumb and straitforward but it may work
     # + This is processer heavy calculations that needs to be done in each request duh.
 
@@ -517,6 +521,7 @@ def suggest_leaders():
 
     d = {}
 
+    inc = set()
     for eachNode in myNetwork:
         ldrs = set(
             map(lambda x: x['id'], json.loads(rels(eachNode)[0].data)[
@@ -536,9 +541,10 @@ def suggest_leaders():
                                   len(followers1.union(followers))) +
                              (len(leaders1.intersection(followers)) /
                               len(leaders1.union(myNetwork)))) / 2.04
+            inc.add(eachNode)
 
     for eachNode in followers.difference(myNetwork):
-        if eachNode in d:
+        if eachNode in inc:
             continue
         # I'm in followers list duh
         res = json.loads(rels(eachNode)[0].data)
@@ -549,8 +555,22 @@ def suggest_leaders():
                                len(followers1.union(followers))) +
                        (len(leaders1.intersection(myNetwork)) /
                         len(leaders1.union(myNetwork)))) / 2.04
+        inc.add(eachNode)
 
-    return jsonify(d)
+    l = []
+
+    # here sort according to the score
+    for key, value in sorted(d.items(), key=lambda x: x[1]):
+        # get user identified with id
+        user = User.get(User.id == key)
+        # keep the list sorted
+        bisect.insort(l, {
+            'username': user.username,
+            'id': user.id,
+            'image_profile': user.imageProfile
+            # 'score': value no no hide this.
+        })
+    return (jsonify(l), 200)
 
 
 @api.route('/whoami')
@@ -561,6 +581,4 @@ def whothefuckami():
 
 @api.route('/search')
 def srch():
-    # this shall be search algorithm for autocompletion, this shall return users with limit
-    # maybe install sphinx to get all the juice from server, I at most 100ms response time
     pass

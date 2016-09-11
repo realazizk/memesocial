@@ -11,31 +11,41 @@
 {% endblock %}
 {% block content %}
 
+
+    <div class="container" style="margin-top: 50px ; padding-left: 20%; padding-right: 20%">
+	{% if maybeLike %}
+	    <label>Suggested leaders</label>
+	    <div class="row">
+		    {% include "viewFollowers.jhtml" %}
+	    </div>
+	{% endif %}
+    </div>
     <div ng-controller="userFeedController" class="container" id="userFeed" >
 	<div  ng-init="initIt();">
 	    <div class="feedcontent" ng-repeat='item in firsElements'>
                 <div class="row">
 		    <div class="col-md-4">
-                        <img  class="userAvatar" alt=""  src="{a item.oimg a}"/>
-                        <a style="margin-left: 10px;" href="#">moonflock</a>
+                        <a href="/profile/{a item.oid  a}"><img  class="userAvatar" alt=""  src="{a item.oimg a}"/></a>
+                        <a style="margin-left: 10px;" href="/profile/{a item.oid a}">{a item.ouser a}</a>
 		    </div>
                 </div>
-                <img alt="" style="width: 100%;" src="{a item.url  a}"/>
+		<a href="/content/{a item.id  a}">                <img alt="" style="width: 100%;" src="{a item.url  a}"/></a>
 	    </div>
 	    
             <div infinite-scroll='loadMore()' infinite-scroll-distance='1'>
 		<div class="feedcontent" ng-repeat='item in items'>
                     <div class="row">
 			<div class="col-md-4">
-                            <img  class="userAvatar" alt=""  src="{a item.oimg a}"/>
-                            <a style="margin-left: 10px;" href="#">moonflock</a>
+                            <a href="/profile/{a item.oid  a}">  <img  class="userAvatar" alt=""  src="{a item.oimg a}"/></a>
+                            <a style="margin-left: 10px;" href="/profile/{a item.oid a}">{a item.ouser a}</a>
 			</div>
                     </div>
-                    <img alt="" style="width: 100%;" src="{a item.url  a}"/>
+                    <a href="/content/{a item.id a}"><img alt="" style="width: 100%;" src="{a item.url a}"/></a>
 		</div>
             </div>
 	</div>
     </div>
+    
     {% block footer %}
     {% endblock %}
     

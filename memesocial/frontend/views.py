@@ -46,7 +46,13 @@ def serve_static(dire, filename):
 @frontend.route('/dashboard')
 @login_required
 def dashboard():
-    return html_minify(render_template('dashboard.jhtml', userData=None, isLogged=True))
+    maybeLike = loads(apiViews.suggest_leaders()[0].data)
+    return html_minify(
+        render_template(
+            'dashboard.jhtml',
+            userData=None,
+            isLogged=True,
+            maybeLike=maybeLike))
 
 
 @frontend.route('/profile/<int:userid>')
