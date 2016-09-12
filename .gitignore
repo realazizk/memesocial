@@ -141,6 +141,8 @@ flycheck_*.el
 .vagrant
 homemohamed/
 
+venv_dev_linux/
+
 images/*
 
 see_structure.sh
@@ -154,3 +156,6 @@ run.py
 roadmap.org
 
 my_app.db
+
+application.db
+
