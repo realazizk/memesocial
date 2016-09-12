@@ -1,6 +1,8 @@
 
 # memesocial project
 
+![Thememe](thememe.jpg)
+
 memesocial.com is a web platform for sharing memes (this is a fancy way of saying a social network).
 
 ### Why does memesocial exist
