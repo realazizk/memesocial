@@ -1,18 +1,24 @@
 import sys
 import json
 import pytest
+from peewee import OperationalError
 sys.path.append('/home/pi/projects/px1/')
-import memesocial
 
 
 @pytest.fixture
 def client(request):
+    import memesocial
+    memesocial.init('memesocial.config.testingConfig')
     client = memesocial.app.test_client()
-
-    def teardown():
-        memesocial.db.drop_tables(memesocial.all_tables)
+    
+    with memesocial.app.app_context():
+        try:
+            memesocial.db.drop_tables(memesocial.all_tables)
+        except OperationalError:
+            # This occurs when the table does not exist
+            pass
         memesocial.db.create_tables(memesocial.all_tables)
-    request.addfinalizer(teardown)
+    
     return client
 
 
@@ -65,7 +71,7 @@ def update_profile_image(client, imageName):
     return response.status_code
 
 
-def update_cover_image(client, imageName):
+def update_cover(client, imageName):
     response = client.post(
         '/api/update_cover_image',
         data=open(imageName, 'r').read(),

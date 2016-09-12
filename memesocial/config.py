@@ -15,6 +15,7 @@ class baseConfig(object):
 
 # The dev config using sqlite?
 class devConfig(baseConfig):
+    SECRET_KEY = "myTopSecretKey"
     DEBUG = True
     TESTING = True
     # Using a sqlite database for development
@@ -25,7 +26,8 @@ class devConfig(baseConfig):
 
 # The config for testing the application?
 class testingConfig(baseConfig):
-    DEBUG = True
+    # If DEBUG is true it causes some errors while testing.
+    DEBUG = False
     TESTING = True
 
     # an in memory database?

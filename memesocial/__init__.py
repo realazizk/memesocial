@@ -1,29 +1,20 @@
 from flask import Flask, send_from_directory, request, make_response, abort
-from os import environ
 from os import path
 from PIL import Image
 from StringIO import StringIO
 from flask_compress import Compress
 
 
-# from werkzeug.contrib.profiler import ProfilerMiddleware
-
 app = Flask(__name__)
-
 Compress(app)
 
 
-# change your config here
-app.config.from_object('memesocial.config.devConfig')
-# app.wsgi_app = ProfilerMiddleware(app.wsgi_app, restrictions=[30])
-
-from models import db, all_tables
-from api import api
-from frontend import frontend
-
-# XXX: FOR DEBUGGING
-if environ.get('TESTING') == '1':
-    db.create_tables(all_tables)
+def init(configObject):
+    # this is not unheard of, pygame uses this trick though it's ugly.
+    app.config.from_object(configObject)
+    from models import db, all_tables
+    global db, all_tables
+    register_all_blueprints()
 
 
 @app.route('/images/<filename>')
@@ -52,18 +43,14 @@ def get_image(filename):
     )
 
 
-def doStuff():
-    register_all_blueprints()
-
-
 def register_all_blueprints():
     """
     Regsiter all of my blueprints
     """
+    from api import api
+    from frontend import frontend
+
     myBlueprints = [api, frontend]
 
     for blueprint in myBlueprints:
         app.register_blueprint(blueprint)
-
-
-doStuff()

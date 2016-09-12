@@ -4,7 +4,7 @@ from itsdangerous import Serializer
 from ..models import User, FollowerRelation, Image, Heart, Comment
 from peewee import IntegrityError, DoesNotExist, fn
 from functools import wraps
-from memesocial import config, utils
+from memesocial import app, utils
 import datetime
 from retcodes import USERNAME_NOT_FOUND, PASSWORD_NOT_FOUND, EMAIL_NOT_FOUND, WRONG_EMAIL,\
     SHORT_USERNAME, ALREADY_REGISTERED_USERNAME, USERNAME_AVAIL, EMAIL_NON_VALID, ALREADY_REGISTERED_EMAIL,\
@@ -29,7 +29,7 @@ def login_required(f):
 
 @api.before_request
 def before_request():
-    g.s = Serializer(config.SECRET_KEY)
+    g.s = Serializer(app.config['SECRET_KEY'])
     g.user = session.get('userData', None)
     if g.user:
         g.user = g.s.loads(g.user)
@@ -143,14 +143,14 @@ def update_profile_image():
     print imageFile
     if imageFile.filename != '':
         filename = utils.save_file(imageFile.read())
-        query = User.update(imageProfile=config.SITE_URL + '/images/' + filename)\
+        query = User.update(imageProfile=app.config['SITE_URL'] + '/images/' + filename)\
                     .where(User.id == g.user['id'])
         if not query.execute():
             return (jsonify(
                 {'errors': [{'detail': 'Could not upload image'}]}), 422)
         return (jsonify({'success':
                          {'detail': 'Uploaded image succefully',
-                          'image': config.SITE_URL + '/images/' + filename}}),
+                          'image': app.config['SITE_URL'] + '/images/' + filename}}),
                 200)
 
 
@@ -252,7 +252,7 @@ def createcontent():
     if imageFile.filename != '':
         filename = utils.save_file(imageFile.read())
         img = Image(
-            url=config.SITE_URL + '/images/' + filename,
+            url=app.config['SITE_URL'] + '/images/' + filename,
             owner=g.user['id'],
             date=datetime.datetime.now())
         if not bool(img.save()):
@@ -350,7 +350,7 @@ def user_posts(userid):
     userContent = []
     for b in bruttoData:
         userContent.append({
-            'content_url': config.SITE_URL + '/content/' + str(b.id),
+            'content_url': app.config['SITE_URL'] + '/content/' + str(b.id),
             'url': b.url,
             'description': b.description,
             'date': b.date,

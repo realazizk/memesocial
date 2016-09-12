@@ -3,7 +3,7 @@ from flask import Blueprint, render_template, send_from_directory, abort, sessio
 from functools import wraps
 import os
 from itsdangerous import Serializer
-from memesocial import config
+from memesocial import app
 from memesocial.api import views as apiViews
 from json import loads
 from htmlmin.minify import html_minify
@@ -25,7 +25,7 @@ def login_required(f):
 
 @frontend.before_request
 def before_request():
-    g.s = Serializer(config.SECRET_KEY)
+    g.s = Serializer(app.config['SECRET_KEY'])
     g.user = session.get('userData', None)
     if g.user:
         g.user = g.s.loads(g.user)

@@ -1,8 +1,11 @@
 from flask_script import Manager, Server, prompt_bool
 import memesocial
 
+memesocial.init('memesocial.config.devConfig')
 
-manager = Manager(memesocial.app)
+from memesocial import app
+
+manager = Manager(app)
 manager.add_command("runserver", Server(host="0.0.0.0", port=1337, threaded=True))
 
 

@@ -5,6 +5,7 @@ from peewee import Model,\
 from passlib.apps import custom_app_context as pwd_context
 from memesocial import app
 
+
 __author__ = "Mohamed Aziz Knani"
 
 __doc__ = """
