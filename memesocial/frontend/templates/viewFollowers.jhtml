@@ -1,0 +1,12 @@
+
+<ul id="suggestFollowers" class="list-group">
+    {% for probableLeader in maybeLike %}
+    <li class="list-group-item">
+	<img class="userThumb" alt="" src="{{ probableLeader.image_profile }}?thumbnail"/>
+	<a class="userLink" href="/profile/{{ probableLeader.id }}">{{ probableLeader.username }}</a>
+	<div class="pull-right">
+	    <a href="" class="btn btn-default followButton">Follow</a>
+	</div>
+    </li>
+    {% endfor %}
+</ul>
