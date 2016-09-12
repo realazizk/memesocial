@@ -2,7 +2,6 @@
 
 # simple functions that I shall be using more than once
 from base64 import b64decode
-from memesocial import config
 import imghdr
 import os
 import shutil
@@ -10,10 +9,13 @@ import uuid
 import urllib
 import StringIO
 import urlparse
+from memesocial import app
+
+config = app.config
 
 
 def allowed_file(extension):
-    return extension in config.ALLOWED_EXTENSIONS
+    return extension in config['ALLOWED_EXTENSIONS']
 
 
 def decode_image(imageData):
@@ -26,7 +28,7 @@ def save_file(fileData):
     ext = imghdr.what(bufferd)
     if allowed_file(ext):
         finalFileName = filename + '.' + ext
-        with open(os.path.join(config.UPLOAD_FOLDER, finalFileName), 'wb') as myfile:
+        with open(os.path.join(config['UPLOAD_FOLDER'], finalFileName), 'wb') as myfile:
             shutil.copyfileobj(bufferd, myfile)
     return finalFileName
 
