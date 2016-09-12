@@ -1,7 +1,6 @@
 from flask import Flask, send_from_directory, request, make_response, abort
 from os import environ
 from os import path
-from config import THUMBNAIL_SIZE
 from PIL import Image
 from StringIO import StringIO
 from flask_compress import Compress
@@ -14,7 +13,8 @@ app = Flask(__name__)
 Compress(app)
 
 
-app.config.from_object('memesocial.config')
+# change your config here
+app.config.from_object('memesocial.config.devConfig')
 # app.wsgi_app = ProfilerMiddleware(app.wsgi_app, restrictions=[30])
 
 from models import db, all_tables
@@ -35,7 +35,7 @@ def get_image(filename):
         except IOError:
             return abort(404)
 
-        img.thumbnail(THUMBNAIL_SIZE)
+        img.thumbnail(app.config.THUMBNAIL_SIZE)
         bufferd = StringIO()
 
         # return this in png?
