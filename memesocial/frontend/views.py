@@ -6,7 +6,6 @@ from itsdangerous import Serializer
 from memesocial import app
 from memesocial.api import views as apiViews
 from json import loads
-from htmlmin.minify import html_minify
 
 frontend = Blueprint('frontend', __name__, template_folder='templates')
 
@@ -47,12 +46,8 @@ def serve_static(dire, filename):
 @login_required
 def dashboard():
     maybeLike = loads(apiViews.suggest_leaders()[0].data)
-    return html_minify(
-        render_template(
-            'dashboard.jhtml',
-            userData=None,
-            isLogged=True,
-            maybeLike=maybeLike))
+    return render_template(
+        'dashboard.jhtml', userData=None, isLogged=True, maybeLike=maybeLike)
 
 
 @frontend.route('/profile/<int:userid>')
@@ -77,15 +72,14 @@ def user_profile(userid):
     else:
         isFollowing = False
 
-    return html_minify(
-        render_template(
-            'profile.jhtml',
-            userid=userid,
-            userData=currUser,
-            isLogged=il,
-            myPage=myPage,
-            relations=relations,
-            isFollowing=isFollowing))
+    return render_template(
+        'profile.jhtml',
+        userid=userid,
+        userData=currUser,
+        isLogged=il,
+        myPage=myPage,
+        relations=relations,
+        isFollowing=isFollowing)
 
 
 @frontend.route('/')
@@ -110,14 +104,11 @@ def serve_image(imageid):
 
     myContent = loads(content.data)['success']
     # TODO: fix this hacky shit ( I need to pass all my variables since images.jhtml inherits from content.jhtml)
-    return html_minify(
-        render_template(
-            renderName,
-            isLogged=il,
-            isMyContent=il and myContent['owner']['id'] == g.user['id'],
-            userData=None, relations=None, myContent=myContent, isHearted=il
-            and filter(lambda x: x['id'] == g.user['id'], myContent[
-                'hearters']) != [], isFollowing=il and filter(
-                    lambda x: x['id'] == g.user['id'], loads(
-                        apiViews.rels(myContent['owner']['id'])[0].data)[
-                            'followers'])))
+    return render_template(
+        renderName,
+        isLogged=il,
+        isMyContent=il and myContent['owner']['id'] == g.user['id'],
+        userData=None, relations=None, myContent=myContent, isHearted=il and
+        filter(lambda x: x['id'] == g.user['id'], myContent['hearters']) != [],
+        isFollowing=il and filter(lambda x: x['id'] == g.user['id'], loads(
+            apiViews.rels(myContent['owner']['id'])[0].data)['followers']))
