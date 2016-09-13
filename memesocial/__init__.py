@@ -26,7 +26,7 @@ def get_image(filename):
         except IOError:
             return abort(404)
 
-        img.thumbnail(app.config.THUMBNAIL_SIZE)
+        img.thumbnail(app.config['THUMBNAIL_SIZE'])
         bufferd = StringIO()
 
         # return this in png?
