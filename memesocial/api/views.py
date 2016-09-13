@@ -140,7 +140,6 @@ def update_profile_image():
     if 'file-input' not in request.files:
         return (jsonify({'errors': {'detail': 'Error in request'}}), 422)
     imageFile = request.files['file-input']
-    print imageFile
     if imageFile.filename != '':
         filename = utils.save_file(imageFile.read())
         query = User.update(imageProfile=app.config['SITE_URL'] + '/images/' + filename)\
