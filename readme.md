@@ -1,6 +1,8 @@
 
 # memesocial project
 
+[![Build Status](https://travis-ci.org/mohamed-aziz/memesocial.svg?branch=master)](https://travis-ci.org/mohamed-aziz/memesocial)
+
 ![Thememe](thememe.jpg)
 
 memesocial.com is a web platform for sharing memes (this is a fancy way of saying a social network).
