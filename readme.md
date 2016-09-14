@@ -15,7 +15,7 @@ Well I like memes so I said why not creating a social network just for memes.
 
 Start by clonning the repo:
 
-	git clone https://github.com/mohamed-aziz/memesocial.git
+	mohamed@host:~/$ git clone https://github.com/mohamed-aziz/memesocial.git
 	
 I suggest that you create a virtual environment using virtualenv and activating it.
 
@@ -26,13 +26,13 @@ Then you need to install the python packages (I use pip and you should also).
 
 	(venv_dev)mohamed@host:~/memesocial$ pip install -r requirements.txt
 	
-(Don't use requirements_dev.txt that's the packages I use for python development in Emacs.
+(Don't use requirements_dev.txt that's the packages I use for python development in Emacs.)
 
 Now you can run the development web server using:
 
 	(venv_dev)mohamed@host:~/memesocial$ python manage.py runserver
 	
-Gunicorn is also installed if you want to go official and use (someone needs to write a wrapper around gunicorn so we can run the production server using that flask script)
+Gunicorn and gevent are also installed if you want to go official and use em (someone needs to write a wrapper around gunicorn so we can run the production server using that flask script)
 
 
 ### Testing memesocial
@@ -51,7 +51,6 @@ There is lots of work that needs to be done:
 
 * We need to write some code on top of fabricjs that allows the users to create memes on the fly.
 
-* We have to fix the damn tests (maybe after all modular tests are a bad idea ?).
 
 * We also need to improve my algorithms for user leaders suggestion and the news feed.
 
