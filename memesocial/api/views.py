@@ -147,10 +147,10 @@ def update_profile_image():
         if not query.execute():
             return (jsonify(
                 {'errors': [{'detail': 'Could not upload image'}]}), 422)
-        return (jsonify({'success':
-                         {'detail': 'Uploaded image succefully',
-                          'image': app.config['SITE_URL'] + '/images/' + filename}}),
-                200)
+        return (jsonify(
+            {'success':
+             {'detail': 'Uploaded image succefully',
+              'image': app.config['SITE_URL'] + '/images/' + filename}}), 200)
 
 
 # ugly I will turn this into a rest api, I'm doing fast dirty hacking for now.
@@ -563,12 +563,13 @@ def suggest_leaders():
         # get user identified with id
         user = User.get(User.id == key)
         # keep the list sorted
-        bisect.insort(l, {
-            'username': user.username,
-            'id': user.id,
-            'image_profile': user.imageProfile
-            # 'score': value no no hide this.
-        })
+        bisect.insort(l,
+                      {
+                          'username': user.username,
+                          'id': user.id,
+                          'image_profile': user.imageProfile
+                          # 'score': value no no hide this.
+                      })
     return (jsonify(l), 200)
 
 
@@ -578,6 +579,24 @@ def whothefuckami():
     return (str(g.user['id']), 200)
 
 
-@api.route('/search')
-def srch():
-    pass
+@api.route('/search', methods=['POST'])
+def search():
+    searchTerm = request.json.get('searchTerm', False)
+    if not searchTerm:
+        return (jsonify({'error': 'No search term given'}), 422)
+
+    if len(searchTerm) < 4:
+        return (jsonify({
+            'error': 'You shall send a term which length is more than 4.',
+        }), 422)
+
+    persons = []
+    for person in User.select().where(User.username.contains(
+            searchTerm)).limit(5):
+        persons.append({
+            'username': person.username,
+            'id': person.id,
+            'image_profile': person.imageProfile
+        })
+
+    return (jsonify({'persons': persons}))

@@ -308,3 +308,50 @@ def test_meme_feed(client):
     k, s = l[0]['score'], l[1]['score']
     assert max(k, s) == 0.25333333333333335
     assert min(k, s) == 0.23333333333333334
+
+
+def searchIt(client, searchTerm):
+    """
+    Keyword Arguments:
+    client     --
+    searchTerm -- the search Term
+    """
+
+    response = client.post(
+        '/api/search',
+        content_type='application/json',
+        data=json.dumps({
+            'searchTerm': searchTerm
+        }))
+
+    return response.status_code, json.loads(response.data)
+
+
+def test_search(client):
+    """
+    Keyword Arguments:
+    client -- Pytest fixture which is a werkzeug test_client app instance
+    """
+
+    register_user(client, 'mohamed', '123')
+    register_user(client, 'mohamedR', 'motherfucker')
+    register_user(client, 'euler', 'mathisCool')
+    register_user(client, 'unke1', 'unke1')
+    register_user(client, 'gigi2', 'test1')
+    register_user(client, 'gigi1', 'pipi1')
+
+    # test search term length < 4
+    rsp = searchIt(client, 'mo')
+    assert rsp[0] == 422
+    assert rsp[1][
+        'error'] == 'You shall send a term which length is more than 4.'
+
+    # test search for persons
+    rsp = searchIt(client, 'mohamed')
+    assert rsp[0] == 200
+    assert len(rsp[1]['persons']) == 2
+
+    # test search of person not found
+    rsp = searchIt(client, 'noting')
+    assert rsp[0] == 200
+    assert len(rsp[1]['persons']) == 0
