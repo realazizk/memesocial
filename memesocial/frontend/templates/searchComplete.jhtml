@@ -1,0 +1,27 @@
+<div  ng-hide="hideIt" id="searchComplete" style="margin-top: 37px;
+				position: absolute;
+				z-index: 100;
+				left: 50%;
+				transform: translate(-50%, 0%);
+				background-color: #fff;
+				border: #ddd 1px solid;">
+
+
+    <div ng-repeat="person in persons">
+	<a href="/profile/{a person.id a}" class="mySearcLink">
+	    <div class="searchContent">
+		<img alt="" src="{a person.image_profile  a}"/>
+		@{a person.username a}
+	    </div>
+	</a>
+    </div>    
+</div>
+
+<script>
+ $(document).ready(function () {
+     $('#searchComplete').css('width', $('#search-bar').outerWidth());
+ });
+ 
+
+</script>
+

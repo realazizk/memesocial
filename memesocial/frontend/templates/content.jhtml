@@ -33,6 +33,24 @@
          });
      });
      var myApp = angular.module('myApp', ['infinite-scroll', 'xeditable', 'ngSanitize']);
+
+     myApp.controller('searchController', function ($http, $scope) {
+	 $scope.hideIt = true;
+	 $scope.mySearch = "";
+	 $scope.persons = [];
+	 $scope.pullSearchData = function () {
+	     $scope.persons = [];
+	     $scope.hideIt = false;
+	     $http.post(
+		 '/api/search',
+		 {searchTerm: $scope.mySearch}
+	     )
+		  .success(function (data) {
+		      $scope.persons = data.persons;
+		  });
+	 };
+     });
+     
      myApp.controller('myController', function($scope, $compile, $http, MemeSocial) {
          $scope.meme = new MemeSocial();
 
@@ -116,6 +134,8 @@
      });
      
     </script>
+
+    
     {% block navbar %}
 	<nav  ng-controller="menuController" style="background: #fff;" class="navbar navbar-default navbar-fixed-top">
             <div class="container">
@@ -126,9 +146,16 @@
 			</a>
                     </div>
 		</div>
-		<form>
-                    <input id="search-bar" type="search" placeholder="Search">
-		</form>
+
+		<div ng-controller="searchController">
+		    <div class="outerCenter">
+			<form>
+			    <input id="search-bar" type="search" placeholder="Search" ng-change="pullSearchData();" ng-model="mySearch">
+			</form>
+		    </div>
+		    {% include "searchComplete.jhtml" %}
+		</div>
+		
 		<div class="nav navbar-nav navbar-right">
                     {% if not isLogged %}
 			<button style="background: #fff;" type="button" class="btn btn-default butts" data-toggle="modal" data-target="#login-modal">Login</button>

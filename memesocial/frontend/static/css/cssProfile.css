@@ -100,21 +100,20 @@ input[type=search] {
     background: #fff url('/static/imgs/search-icon.png') no-repeat 9px center;
     border: solid 1px #ccc;
     padding: 4px 10px 4px 32px;
-    width: 55px;
-    margin-left: -28;
-    
-    -webkit-border-radius: 10em;
-    -moz-border-radius: 10em;
-    border-radius: 10em;
+    width: 150px;
     margin-top: 3px;
-    -webkit-transition: all .5s;
-    -moz-transition: all .5s;
-    transition: all .5s;
-    position:absolute;
-    left:50%;
+    
 }
+
+.outerCenter {
+    position: absolute;
+    width: 100%;
+    left: 0;
+    text-align: center;
+    margin: auto;
+}
+
 input[type=search]:focus {
-    width: 130px;
     background-color: #fff;
     border-color: #66CC75;
     
