@@ -46,8 +46,9 @@ def serve_static(dire, filename):
 @login_required
 def dashboard():
     maybeLike = loads(apiViews.suggest_leaders()[0].data)
+    usrData = loads(apiViews.user_info(g.user['id'])[0].data)
     return render_template(
-        'dashboard.jhtml', userData=None, isLogged=True, maybeLike=maybeLike)
+        'dashboard.jhtml', isLogged=True, maybeLike=maybeLike, currUser=usrData, userData=None)
 
 
 @frontend.route('/profile/<int:userid>')
@@ -58,9 +59,16 @@ def user_profile(userid):
         abort(404)
     try:
         il = g.user is not None
+        usrData = loads(apiViews.user_info(g.user['id'])[0].data)
     except:
         il = False
+        usrData = None
+
     myPage = True if il and g.user.get('id') == userid else False
+
+    if il:
+        usrData = loads(apiViews.user_info(g.user['id'])[0].data)
+
     if myPage:
         isFollowing = False
     elif il:
@@ -74,6 +82,7 @@ def user_profile(userid):
 
     return render_template(
         'profile.jhtml',
+        currUser=usrData,
         userid=userid,
         userData=currUser,
         isLogged=il,
@@ -91,8 +100,10 @@ def index():
 def serve_image(imageid):
     try:
         il = g.user is not None
+        usrData = loads(apiViews.user_info(g.user['id'])[0].data)
     except:
         il = False
+        usrData = None
     content, status = apiViews.gcontent(imageid)
     if status != 200:
         abort(400)
@@ -112,4 +123,6 @@ def serve_image(imageid):
         userData=None, relations=None, myContent=myContent, isHearted=il and
         filter(lambda x: x['id'] == g.user['id'], myContent['hearters']) != [],
         isFollowing=il and filter(lambda x: x['id'] == g.user['id'], loads(
-            apiViews.rels(myContent['owner']['id'])[0].data)['followers']))
+            apiViews.rels(myContent['owner']['id'])[0].data)['followers']),
+        currUser=usrData
+    )
