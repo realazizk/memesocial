@@ -3,9 +3,12 @@
 
 [![Build Status](https://travis-ci.org/mohamed-aziz/memesocial.svg?branch=master)](https://travis-ci.org/mohamed-aziz/memesocial)
 
-![Thememe](thememe.jpg)
+<p align="center">
+	![Thememe](thememe.jpg)
+	<br>
+	memesocial.com is a web platform for sharing memes (this is a fancy way of saying a social network).
+</p>
 
-memesocial.com is a web platform for sharing memes (this is a fancy way of saying a social network).
 
 ### Why does memesocial exist
 
