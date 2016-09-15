@@ -6,7 +6,8 @@ memesocial.init('memesocial.config.devConfig')
 from memesocial import app
 
 manager = Manager(app)
-manager.add_command("runserver", Server(host="0.0.0.0", port=1337, threaded=True))
+manager.add_command("runserver", Server(
+    host="0.0.0.0", port=1337, threaded=True))
 
 
 @manager.command
@@ -28,6 +29,19 @@ def dropdb():
 def recreatedb():
     dropdb()
     createdb()
+
+
+@manager.command
+def autopep8():
+    # only works in Unix
+    import commands
+    print commands.getoutput('autopep8 memesocial --recursive --in-place --pep8-passes 2000 --verbose')
+
+
+@manager.command
+def pep8():
+    import commands
+    print commands.getoutput('pep8 memesocial')
 
 
 if __name__ == "__main__":

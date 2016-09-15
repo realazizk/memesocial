@@ -78,12 +78,14 @@ There is lots of work that needs to be done:
 
 * [mohamed-aziz/colorpanel](https://github.com/mohamed-aziz/colorpanel)
 
-* Emacs 24.4 with magit-mode, elpy-mode and projectile-mode.
+* Emacs 24.4 with magit-mode, elpy-mode, projectile-mode and web-mode.
 
 
-### Authors
+### Author
 
 * **Mohamed Aziz Knani** [mohamed-aziz](https://github.com/mohamed-aziz)
+
+### Contributors
 
 * **Add your name here**
 
