@@ -42,11 +42,10 @@ Gunicorn and gevent are also installed if you want to go official and use em (so
 
 ### Testing memesocial
 
-I have written some tests for the API (they are broken now), you can run them using py.test
+I have written some tests for the API, you can run them using py.test.
 
 	(venv_dev)mohamed@host:~/memesocial$ py.test memesocial/tests/
-	
-For now we did not write coding style tests but you should go with PEP8 with the python code.
+
 
 ### What needs to get done
 
@@ -88,6 +87,19 @@ There is lots of work that needs to be done:
 ### Contributors
 
 * **Add your name here**
+
+### How to contribure?
+
+You have to fork the repo, make your changes and then make a pull request.
+
+I suggest checking pep8 compliance with :
+
+	(venv_dev)mohamed@host:~/memesocial$ python manage.py pep8
+	
+You could fix them automatically with autopep8 using:
+
+	(venv_dev)mohamed@host:~/memesocial$ python manage.py autopep8
+
 
 ### License
 

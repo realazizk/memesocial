@@ -41,7 +41,7 @@ def autopep8():
 @manager.command
 def pep8():
     import commands
-    print commands.getoutput('pep8 memesocial')
+    print commands.getoutput('pep8 memesocial --ignore=E501')
 
 
 if __name__ == "__main__":
