@@ -62,7 +62,6 @@
          $scope.loadMore = function () {
              if ($scope.allItems.length>0) {
                  $scope.items = $scope.items.concat($scope.allItems.splice(0,1));
-                 console.log($scope.allItems);
              }
          };
      });

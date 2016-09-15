@@ -126,7 +126,6 @@ alt="userProfileImage" src="{{ myContent.owner.image_profile }}?thumbnail"/>
 	     body: '{{  commentor.body}}',
 	     userid: {{ commentor.id }}
 	 });{% endfor %}
-	 console.log();
 	 $scope.commentOnIt  = function () {
 	     $http.post('/api/comment', {
 		 content_id: {{ myContent.id }},

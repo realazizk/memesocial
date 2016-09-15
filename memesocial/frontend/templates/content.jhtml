@@ -22,7 +22,6 @@
              contentType: false,
              processData: false,
              success: function(data) {
-                 console.log(data.success.image);
                  $('#theAvatar').css('background-image', 'url(' + data.success.image + ')');
              },
          })
@@ -82,7 +81,6 @@
              var url = this.nextUrl;
              $http.get(url).success(function(data) {
                  this.nextUrl = data.next;
-                 console.log(this.nextUrl);
                  var items = data.data;
                  for (var i = 0; i < items.length; i++) {
                      this.items.push(items[i]);

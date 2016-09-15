@@ -25,9 +25,6 @@
 			 uploadClass: "btn btn-info",
 			 uploadLabel: "Upload",
 			 uploadIcon: "<i class=\"glyphicon glyphicon-upload\"></i> ",
-			 extra: function () {
-			     console.log('MEH');
-			 }
 		     });
 
 		     $('#input-21').on('fileuploaded', function(event, data, previewId, index) {
