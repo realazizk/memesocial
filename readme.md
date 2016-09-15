@@ -5,8 +5,9 @@
 
 
 <p align="center">
-	![Thememe](thememe.jpg)
-	<br>
+	<b>You say memesocial?</b><br/>
+	<img src="thememe.jpg/>
+	<br/>
 	memesocial.com is a web platform for sharing memes (this is a fancy way of saying a social network).
 </p>
 
