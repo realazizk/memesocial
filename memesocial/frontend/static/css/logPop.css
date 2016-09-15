@@ -1,85 +1,129 @@
 
-.loginmodal-container {
-    padding: 30px;
-    max-width: 350px;
-    width: 100% !important;
-    background-color: #F7F7F7;
-    margin: 0 auto;
-    border-radius: 2px;
-    box-shadow: 0px 2px 2px rgba(0, 0, 0, 0.3);
-    overflow: hidden;
-    font-family: roboto;
+#login-modal .modal-dialog {
+    width: 350px;
 }
-.loginmodal-container h1 {
+
+#login-modal input[type=text], input[type=password] {
+	margin-top: 10px;
+}
+
+#div-login-msg,
+#div-lost-msg,
+#div-register-msg {
+    border: 1px solid #dadfe1;
+    height: 30px;
+    line-height: 28px;
+    transition: all ease-in-out 500ms;
+}
+
+#div-login-msg.success,
+#div-lost-msg.success,
+#div-register-msg.success {
+    border: 1px solid #68c3a3;
+    background-color: #c8f7c5;
+}
+
+#div-login-msg.error,
+#div-lost-msg.error,
+#div-register-msg.error {
+    border: 1px solid #eb575b;
+    background-color: #ffcad1;
+}
+
+#icon-login-msg,
+#icon-lost-msg,
+#icon-register-msg {
+    width: 30px;
+    float: left;
+    line-height: 28px;
     text-align: center;
-    font-size: 1.8em;
-    font-family: roboto;
+    background-color: #dadfe1;
+    margin-right: 5px;
+    transition: all ease-in-out 500ms;
 }
-.loginmodal-container input[type=submit] {
-    width: 100%;
-    display: block;
-    margin-bottom: 10px;
+
+#icon-login-msg.success,
+#icon-lost-msg.success,
+#icon-register-msg.success {
+    background-color: #68c3a3 !important;
+}
+
+#icon-login-msg.error,
+#icon-lost-msg.error,
+#icon-register-msg.error {
+    background-color: #eb575b !important;
+}
+
+#img_logo {
+    max-height: 100px;
+    max-width: 100px;
+}
+
+/* #########################################
+   #    override the bootstrap configs     #
+   ######################################### */
+
+.modal-backdrop.in {
+    filter: alpha(opacity=50);
+    opacity: .8;
+}
+
+.modal-content {
+    background-color: #ececec;
+    border: 1px solid #bdc3c7;
+    border-radius: 0px;
+    outline: 0;
+}
+
+.modal-header {
+    min-height: 16.43px;
+    padding: 15px 15px 15px 15px;
+    border-bottom: 0px;
+}
+
+.modal-body {
     position: relative;
+    padding: 5px 15px 5px 15px;
 }
-.loginmodal-container input[type=text], input[type=password] {
-    height: 44px;
-    font-size: 16px;
-    width: 100%;
-    margin-bottom: 10px;
-    -webkit-appearance: none;
-    background: #fff;
-    border: 1px solid #d9d9d9;
-    border-top: 1px solid #c0c0c0;
-    /* border-radius: 2px; */
-    padding: 0 8px;
-    box-sizing: border-box;
-    -moz-box-sizing: border-box;
+
+.modal-footer {
+    padding: 15px 15px 15px 15px;
+    text-align: left;
+    border-top: 0px;
 }
-.loginmodal-container input[type=text]:hover, input[type=password]:hover {
-    border: 1px solid #b9b9b9;
-    border-top: 1px solid #a0a0a0;
-    -moz-box-shadow: inset 0 1px 2px rgba(0,0,0,0.1);
-    -webkit-box-shadow: inset 0 1px 2px rgba(0,0,0,0.1);
-    box-shadow: inset 0 1px 2px rgba(0,0,0,0.1);
+
+.checkbox {
+    margin-bottom: 0px;
 }
-.loginmodal {
-    text-align: center;
-    font-size: 14px;
-    font-family: 'Arial', sans-serif;
-    font-weight: 700;
-    height: 36px;
-    padding: 0 8px;
-    /* border-radius: 3px; */
-    /* -webkit-user-select: none;
-       user-select: none; */
+
+
+.btn:focus,
+.btn:active:focus,
+.btn.active:focus,
+.btn.focus,
+.btn:active.focus,
+.btn.active.focus {
+    outline: none;
 }
-.loginmodal-submit {
-    /* border: 1px solid #3079ed; */
-    border: 0px;
-    color: #fff;
-    text-shadow: 0 1px rgba(0,0,0,0.1);
-    background-color: #4d90fe;
-    padding: 17px 0px;
-    font-family: roboto;
-    font-size: 14px;
-    /* background-image: -webkit-gradient(linear, 0 0, 0 100%,   from(#4d90fe), to(#4787ed)); */
+
+.btn-lg, .btn-group-lg>.btn {
+    border-radius: 0px;
 }
-.loginmodal-submit:hover {
-    /* border: 1px solid #2f5bb7; */
-    border: 0px;
-    text-shadow: 0 1px rgba(0,0,0,0.3);
-    background-color: #357ae8;
-    /* background-image: -webkit-gradient(linear, 0 0, 0 100%,   from(#4d90fe), to(#357ae8)); */
+
+.btn-link {
+    padding: 5px 10px 0px 0px;
+    color: #95a5a6;
 }
-.loginmodal-container a {
+
+.btn-link:hover, .btn-link:focus {
+    color: #2c3e50;
     text-decoration: none;
-    color: #666;
-    font-weight: 400;
-    text-align: center;
-    display: inline-block;
-    opacity: 0.6;
-    transition: opacity ease 0.5s;
 }
-.login-help{
-    font-size: 12px;
+
+.glyphicon {
+    top: 0px;
+}
+
+.form-control {
+  border-radius: 0px;
 }
