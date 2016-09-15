@@ -24,14 +24,22 @@
 			 removeIcon: "<i class=\"glyphicon glyphicon-trash\"></i> ",
 			 uploadClass: "btn btn-info",
 			 uploadLabel: "Upload",
-			 uploadIcon: "<i class=\"glyphicon glyphicon-upload\"></i> "
+			 uploadIcon: "<i class=\"glyphicon glyphicon-upload\"></i> ",
+			 extra: function () {
+			     console.log('MEH');
+			 }
+		     });
+
+		     $('#input-21').on('fileuploaded', function(event, data, previewId, index) {
+			 var form = data.form, files = data.files, extra = data.extra,
+			     response = data.response, reader = data.reader;
+			 window.location = '/content/' + response.success[0].contentid;
 		     });
 		 });
 		</script>
 	    </div>
 	    <div class="modal-footer">
 		<button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-		<button type="button" class="btn btn-primary">Make it public</button>
 	    </div>
 	</div>
     </div>

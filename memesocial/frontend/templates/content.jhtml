@@ -139,7 +139,7 @@
     {% block navbar %}
 	<nav  ng-controller="menuController" style="background: #fff;" class="navbar navbar-default navbar-fixed-top">
             <div class="container">
-		<div class="nav navbar-nav navbar-left">
+		<div class="nav navbar-nav navbar-left" style="z-index: 200; position: relative;">
                     <div class="navbar-header">
 			<a class="navbar-brand" href="/">
                             Memesocial
@@ -156,14 +156,20 @@
 		    {% include "searchComplete.jhtml" %}
 		</div>
 		
-		<div class="nav navbar-nav navbar-right">
+		<div class="nav navbar-nav navbar-right" style="z-index: 200; position: relative">
                     {% if not isLogged %}
 			<button style="background: #fff;" type="button" class="btn btn-default butts" data-toggle="modal" data-target="#login-modal">Login</button>
                     {% else %}
 			<button style="height: 33px;
-                                       background: #45ce49;
+                                       background: {{ currUser.color }};
                                        margin-right: 4px;
                                        color: #fff;"  data-toggle="modal" data-target="#upload-modal" type="button" class="btn btn-default butts"><span class="glyphicon glyphicon-pencil"></span></button>
+
+			<a class="btn btn-default butts" href="/profile/{{ currUser.id }}" style="padding: 0px; padding-right: 12px; background: #fff">
+			    <img  alt="" src="{{ currUser.profile_image }}?thumbnail"  style="height: 30px; border-radius: 50%; width: 30px"/>
+			    @{{ currUser.username }}
+			</a>
+			
 			<button  ng-click="logout();" style="background: #fff;" id="logoutButt" type="button" class="btn btn-default butts"><span class="glyphicon glyphicon-log-in"></span> Logout</button>
                     {% endif %}
 		</div>
