@@ -16,7 +16,7 @@ def login_required(f):
         if g.user is None:
             return (jsonify(
                 {'errors': [{'detail': 'You are not allowed here sucker'}]}),
-                    405)
+                405)
         return f(*args, **kwargs)
 
     return decorated_function
@@ -103,7 +103,8 @@ def serve_image(imageid):
         renderName = 'images.jhtml'
 
     myContent = loads(content.data)['success']
-    # TODO: fix this hacky shit ( I need to pass all my variables since images.jhtml inherits from content.jhtml)
+    # TODO: fix this hacky shit ( I need to pass all my variables since
+    # images.jhtml inherits from content.jhtml)
     return render_template(
         renderName,
         isLogged=il,

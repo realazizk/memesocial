@@ -33,7 +33,8 @@ class User(BaseModel):
     password = FixedCharField(120)
 
     bio = FixedCharField(100, default='')
-    imageProfile = FixedCharField(250, null=True, default='/images/anonymous.png')
+    imageProfile = FixedCharField(
+        250, null=True, default='/images/anonymous.png')
 
     # this will be some color.
     coverProfile = FixedCharField(250, null=True, default='GREEN')

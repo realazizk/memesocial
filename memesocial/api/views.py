@@ -21,7 +21,7 @@ def login_required(f):
         if g.user is None:
             return (jsonify(
                 {'errors': [{'detail': 'You are not allowed here sucker'}]}),
-                    405)
+                405)
         return f(*args, **kwargs)
 
     return decorated_function
@@ -70,7 +70,8 @@ def reg():
                                    'code': EMAIL_NOT_FOUND}}), 400)
 
     try:
-        # I don't trust the users though javascript the frontend part will take care of this
+        # I don't trust the users though javascript the frontend part will take
+        # care of this
         if not validate_email(email):
             return (jsonify({'error': {'detail': 'Wrong email',
                                        'code': WRONG_EMAIL}}), 400)
@@ -177,14 +178,14 @@ def followLeader(leaderid):
     if leaderid == g.user['id']:
         return (jsonify(
             {'errors': [{'detail': 'You can not follow yourself silly'}]}),
-                405)
+            405)
     # if there is an integrity error (the relation is already existant)
     try:
         FollowerRelation.create(follower=g.user['id'], leader=leaderid)
     except IntegrityError:
         return (jsonify(
             {'errors': [{'detail': 'You are already following this user'}]}),
-                405)
+            405)
 
     return (jsonify({'success': 'Followed user succefully'}))
 
@@ -382,7 +383,7 @@ def heart_it(contentid):
     except IntegrityError:
         return (jsonify(
             {'error': 'You sneaky bastard you already hearted this content.'}),
-                202)
+            202)
     return (jsonify({'success': 'Nice you hearted this content.'}), 200)
 
 
@@ -424,7 +425,9 @@ def get_news_feed():
     # I need to play with the numbers to see if this gives realistic scores?
 
     # Crank(x, y) = (1/(tx+1)) * Affinity(Owner(x), y)
-    # Affinity(x, y) = (|| followers(x) intersection followers(y) || / 100) + (|| leaders(x) intersection leaders(y) || / 100) + (hearts(x, y)/10) + (hearts(y, x)/30)
+    # Affinity(x, y) = (|| followers(x) intersection followers(y) || / 100) +
+    # (|| leaders(x) intersection leaders(y) || / 100) + (hearts(x, y)/10) +
+    # (hearts(y, x)/30)
 
     leaders = FollowerRelation.select(FollowerRelation.leader).where(
         FollowerRelation.follower == g.user['id'])
