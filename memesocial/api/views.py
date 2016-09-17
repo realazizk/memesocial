@@ -8,7 +8,7 @@ from memesocial import app, utils
 import datetime
 from retcodes import USERNAME_NOT_FOUND, PASSWORD_NOT_FOUND, EMAIL_NOT_FOUND, WRONG_EMAIL,\
     SHORT_USERNAME, ALREADY_REGISTERED_USERNAME, USERNAME_AVAIL, EMAIL_NON_VALID, ALREADY_REGISTERED_EMAIL,\
-    EMAIL_AVAIL, USED_USERNAME, WRONG_LOGIN, BIO_NOT_UPDATED, BIO_UPDATED
+    EMAIL_AVAIL, USED_USERNAME, WRONG_LOGIN, BIO_NOT_UPDATED, BIO_UPDATED, BAD_ARGS, STATE_CHANGED
 
 __author__ = "Mohamed Aziz Knani"
 
@@ -202,11 +202,31 @@ def unfollowLeader(leaderid):
     return (jsonify({'success': 'Unfollowed user succefully'}), 200)
 
 
+@api.route('/content/<int:cid>/hide', methods=['POST'])
+def hide_content(cid):
+    hidden = request.json.get('hide', False)
+    if not hidden:
+        # I really do not need a boolean but meh..
+        return jsonify({
+            'error': {'detail': 'Specify a hide boolean', 'code': BAD_ARGS}
+        })
+
+    responseObject = gcontent(cid)
+    if responseObject[1] != 200:
+        return responseObject[0]
+    imageObject = Image.get(Image.id == cid)
+    imageObject.hidden = True
+    imageObject.save()
+    return (jsonify({
+        'success': {'detail': 'What has been hidden can not be unhidden', 'code': STATE_CHANGED}
+    }), 200)
+
+
 @api.route('/content/<int:cid>')
 def gcontent(cid):
     # every one can see the content
     try:
-        i = Image.get(Image.id == cid)
+        i = Image.get(Image.id == cid, Image.hidden == False)
     except DoesNotExist:
         return (jsonify({'errors': [{'detail': 'Content does not exist'}]}),
                 422)
@@ -345,7 +365,7 @@ def user_posts(userid):
     # TODO: get number of hearts and comments
     bruttoData = Image.select().where(
         Image.owner ==
-        userid).order_by(Image.id.desc()).offset(start - 1).limit(limit)
+        userid, Image.hidden == False).order_by(Image.id.desc()).offset(start - 1).limit(limit)
 
     userContent = []
     for b in bruttoData:
@@ -431,7 +451,7 @@ def get_news_feed():
 
     leaders = FollowerRelation.select(FollowerRelation.leader).where(
         FollowerRelation.follower == g.user['id'])
-    posts = Image.select().where(Image.owner << leaders)
+    posts = Image.select().where(Image.owner << leaders, Image.hidden == False)
     psts = []
 
     result = json.loads(rels(g.user['id'])[0].data)

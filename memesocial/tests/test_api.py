@@ -166,6 +166,45 @@ def test_content(client):
     assert len(r[1]['success']['hearters']) == 1
 
 
+def get_user_posts(client, userid):
+    response = client.get('/api/user_posts/%i' % userid)
+    return response.status_code, json.loads(response.data)
+
+def get_news_feed(client):
+    response = client.get('/api/news_feed')
+    return response.status_code, json.loads(response.data)
+
+
+def test_hide_content(client):
+    register_user(client, 'mohamed', 'mohamed')
+    register_user(client, 'user1', 'user1')
+    do_follow(client, 'user1', 'user1', 1)
+    do_login(client, 'mohamed', 'mohamed')
+    mk_content(client, 'imgTest.jpg', 'desc')
+    # hide it?
+    response = client.post(
+        '/api/content/1/hide',
+        data=json.dumps({
+            'hide': 'true'
+        }),
+        content_type='application/json')
+    # check if hidden?
+    assert response.status_code == 200
+    assert json.loads(response.data).has_key('success') == True
+    resp = get_content(client, 1)
+    assert resp[0] == 422
+    # check content hidden from user page?
+    # shall be empty
+    code, resp = get_user_posts(client, 1)
+    assert resp['errors'][0]['detail'] == 'No more Posts'
+
+    # check user feed
+    do_logout(client)
+    do_login(client, 'user1', 'user1')
+    code, resp = get_news_feed(client)
+    assert resp == []
+
+
 def do_follow(client, user, password, target):
     do_login(client, user, password)
     assert client.get('/api/follow/%i' % target).status_code == 200
