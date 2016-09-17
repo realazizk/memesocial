@@ -12,6 +12,27 @@
 
 {% block content %}
     <div class="container">
+
+	{# THE Delete modal #}
+	<div ng-controller="deleteContentController" class="modal fade" id="delete-modal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+		<div class="modal-content">
+                    <div class="modal-header">
+			<button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+			<h4 class="modal-title" id="myModalLabel">Confirm Delete</h4>
+                    </div>
+                    <div class="modal-body">
+			<p>You are about to delete this content <b><i class="title"></i></b> What has been deleted can not be undeledet</p>
+			<p>Do you want to proceed?</p>
+                    </div>
+                    <div class="modal-footer">
+			<button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+			<button ng-click="clickDelete();"  type="button" class="btn btn-danger btn-ok">Delete</button>
+                    </div>
+		</div>
+            </div>
+	</div>
+	
 	
 	<div style="margin-top:100px"></div>
 	<div class="row myImageContent" ng-controller="heartController">
@@ -38,7 +59,11 @@ alt="userProfileImage" src="{{ myContent.owner.image_profile }}?thumbnail"/>
 			</div>
 
 			<div class="col-md-4" ng-controller="followController">
-			    <a class="btn btn-block btn-primary btn-outline" {% if isMyContent %} style="visibility: hidden" {% endif %}    {% if not isLogged %} data-toggle="modal" data-target="#login-modal" {% endif %} ng-click="doIt();">{a fButt ? 'Unfollow': 'Follow'  a}</a>
+			    <a class="btn btn-block btn-primary btn-outline" {% if isMyContent %} style="display: none" {% endif %}    {% if not isLogged %} data-toggle="modal" data-target="#login-modal" {% endif %} ng-click="doIt();">{a fButt ? 'Unfollow': 'Follow'  a}</a>
+
+			    {% if isMyContent %}
+				<a class="btn btn-block btn-danger" data-toggle="modal" data-target="#delete-modal">Delete</a>
+			    {% endif %}
 			</div>
 			
 		    </div>
@@ -89,6 +114,22 @@ alt="userProfileImage" src="{{ myContent.owner.image_profile }}?thumbnail"/>
 			($('#myColumnImage').css('height').replace('px', '') -
 			 $('#myUpperContent').css('height').replace('px', '')- 30 - $('#commentBox').css('height').replace('px', '')) + 'px'
      );
+
+     myApp.controller('deleteContentController', function ($scope, $http) {
+
+	 $scope.clickDelete = function () {
+	     $http.post('/api/content/{{ myContent.id }}/hide',
+			{
+			    hide: 'true'   
+			},
+			{headers: { 'Content-Type': 'application/json'}}
+	     )
+		  .success(function () {
+		      history.go(-1);
+		      
+		  });
+	 };
+     });
      
      myApp.controller('heartController', function ($scope, $http){
 	 $scope.hButt = {% if isHearted %} true {% else  %} false {% endif %};
