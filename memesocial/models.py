@@ -63,6 +63,7 @@ class Image(BaseModel):
     url = FixedCharField(250)
     owner = ForeignKeyField(User, to_field='id')
     description = TextField(null=True, default='Add a description here')
+    hidden = BooleanField(default=False)
     date = DateTimeField()
 
 
