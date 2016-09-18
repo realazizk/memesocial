@@ -170,6 +170,7 @@ def get_user_posts(client, userid):
     response = client.get('/api/user_posts/%i' % userid)
     return response.status_code, json.loads(response.data)
 
+
 def get_news_feed(client):
     response = client.get('/api/news_feed')
     return response.status_code, json.loads(response.data)
