@@ -91,6 +91,8 @@ def user_profile(userid):
 
 @frontend.route('/')
 def index():
+    if g.user is not None:
+        return redirect('/dashboard')
     return render_template('index.jhtml')
 
 
