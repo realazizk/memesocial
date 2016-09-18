@@ -1,12 +1,34 @@
 
-<ul id="suggestFollowers" class="list-group">
+<ul id="suggestFollowers" class="list-group" ng-controller="leaderController">
     {% for probableLeader in maybeLike %}
     <li class="list-group-item">
 	<img class="userThumb" alt="" src="{{ probableLeader.image_profile }}?thumbnail"/>
 	<a class="userLink" href="/profile/{{ probableLeader.id }}">{{ probableLeader.username }}</a>
 	<div class="pull-right">
-	    <a href="" class="btn btn-default followButton">Follow</a>
+	    <a href="" class="btn btn-default followButton" ng-click="doIt({{ probableLeader.id }})" >{a isFollowing({{ probableLeader.id }}) ? 'Unfollow' : 'Follow'  a}</a>
 	</div>
     </li>
     {% endfor %}
 </ul>
+
+
+<script>
+ myApp.controller('leaderController', function ($http, $scope) {
+     var leaders = {  };
+     {% for prob in maybeLike %}leaders[{{ prob.id }}]=false;{% endfor %}
+
+     $scope.isFollowing = function (userid) {
+	 return leaders[userid];
+     };
+     
+     $scope.doIt = function (userid) {
+	 var pth = leaders[userid] ? '/api/unfollow/' : '/api/follow/';
+	 $http.get(pth + userid)
+	      .success(function (data, status) {
+		  leaders[userid] = !leaders[userid];
+	      });
+	
+     };
+ });
+ 
+</script>
