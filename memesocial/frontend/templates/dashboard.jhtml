@@ -21,26 +21,26 @@
 	{% endif %}
     </div>
     <div ng-controller="userFeedController" class="container" id="userFeed" >
-	<div  ng-init="initIt();">
+	<div ng-init="initIt();">
 	    <div class="feedcontent" ng-repeat='item in firsElements'>
                 <div class="row">
 		    <div class="col-md-4">
-                        <a href="/profile/{a item.oid  a}"><img  class="userAvatar" alt=""  src="{a item.oimg a}"/></a>
-                        <a style="margin-left: 10px;" href="/profile/{a item.oid a}">{a item.ouser a}</a>
+                        <a ng-href="/profile/{a item.oid  a}"><img  class="userAvatar" alt=""  ng-src="{a item.oimg a}"/></a>
+                        <a style="margin-left: 10px;" ng-href="/profile/{a item.oid a}">{a item.ouser a}</a>
 		    </div>
                 </div>
-		<a href="/content/{a item.id  a}">                <img alt="" style="width: 100%;" src="{a item.url  a}"/></a>
+		<a ng-href="/content/{a item.id  a}">                <img alt="" style="width: 100%;" ng-src="{a item.url  a}"/></a>
 	    </div>
 	    
             <div infinite-scroll='loadMore()' infinite-scroll-distance='1'>
 		<div class="feedcontent" ng-repeat='item in items'>
                     <div class="row">
 			<div class="col-md-4">
-                            <a href="/profile/{a item.oid  a}">  <img  class="userAvatar" alt=""  src="{a item.oimg a}"/></a>
-                            <a style="margin-left: 10px;" href="/profile/{a item.oid a}">{a item.ouser a}</a>
+                            <a ng-href="/profile/{a item.oid  a}">  <img  class="userAvatar" alt=""  ng-src="{a item.oimg a}"/></a>
+                            <a style="margin-left: 10px;" ng-href="/profile/{a item.oid a}">{a item.ouser a}</a>
 			</div>
                     </div>
-                    <a href="/content/{a item.id a}"><img alt="" style="width: 100%;" src="{a item.url a}"/></a>
+                    <a ng-href="/content/{a item.id a}"><img alt="" style="width: 100%;" ng-src="{a item.url a}"/></a>
 		</div>
             </div>
 	</div>

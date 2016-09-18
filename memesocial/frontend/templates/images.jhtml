@@ -11,7 +11,7 @@
 {% endblock %}
 
 {% block content %}
-    <div class="container">
+    <div class="container" style="padding-bottom: 20px; min-height: 100%;">
 
 	{# THE Delete modal #}
 	<div ng-controller="deleteContentController" class="modal fade" id="delete-modal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
@@ -36,8 +36,9 @@
 	
 	<div style="margin-top:100px"></div>
 	<div class="row myImageContent" ng-controller="heartController">
-	    <div id="myColumnImage" class="col-md-8 myCurrImage" style="background-image: url('{{ myContent.url }}')">
-		
+	    <div id="myColumnImage" class="col-md-8 myCurrImage" >
+		<img alt="" style="width:100%;
+				   "  src="{{ myContent.url }}"/>
 	    </div>
 	    
 	    <div class="col-md-4">
@@ -95,7 +96,7 @@ alt="userProfileImage" src="{{ myContent.owner.image_profile }}?thumbnail"/>
 		    <div class="row" id="commentBox">
 			<div class="col-xs-8">
 			    <div class="form-group">
-				<textarea ng-model="commentContent"  placeholder="Say something!" class="form-control" rows="1"></textarea>
+				<textarea style="resize: none;"  ng-model="commentContent"  placeholder="Say something!" class="form-control" rows="1"></textarea>
 			    </div>
 			</div>
 			<div class="col-xs-4">

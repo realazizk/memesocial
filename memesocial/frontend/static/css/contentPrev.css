@@ -1,7 +1,5 @@
-.myCurrImage {
-    height: 100%;
-    background-repeat: no-repeat;
-    background-size: 100% 100%;
+#myColumnImage {
+    padding: 0px;
 }
 
 .fucking_comments {
