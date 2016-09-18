@@ -1,5 +1,5 @@
 from flask import Blueprint, render_template, send_from_directory, abort, session, g,\
-    jsonify, request
+    jsonify, request, redirect
 from functools import wraps
 import os
 from itsdangerous import Serializer
@@ -14,9 +14,7 @@ def login_required(f):
     @wraps(f)
     def decorated_function(*args, **kwargs):
         if g.user is None:
-            return (jsonify(
-                {'errors': [{'detail': 'You are not allowed here sucker'}]}),
-                405)
+            return redirect('/')
         return f(*args, **kwargs)
 
     return decorated_function
