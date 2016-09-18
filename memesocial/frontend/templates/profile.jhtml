@@ -23,6 +23,7 @@
             <ul></ul>
         </div>
     {% endif %}
+    
     <div id="duh" style="background-color: {{ userData.color }}" class="imgCover">
         <div class="container">
             <div class="row myRow" style="color: #fff">
@@ -128,7 +129,7 @@
 	 }
      });
 
-
+     
     </script>
 
 {% endblock %}

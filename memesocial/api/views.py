@@ -2,7 +2,7 @@ from __future__ import division
 from flask import Blueprint, request, g, jsonify, session
 from itsdangerous import Serializer
 from ..models import User, FollowerRelation, Image, Heart, Comment
-from peewee import IntegrityError, DoesNotExist, fn
+from peewee import IntegrityError, DoesNotExist, fn, JOIN_LEFT_OUTER
 from functools import wraps
 from memesocial import app, utils
 import datetime
@@ -593,6 +593,19 @@ def suggest_leaders():
                           'image_profile': user.imageProfile
                           # 'score': value no no hide this.
                       })
+    # if the list is empty for some reason get users with most content
+    if not l:
+        users = User.select().join(Image, JOIN_LEFT_OUTER).where(User.id != g.user['id'], ~(User.id << myNetwork)).group_by(User.username).order_by(fn.COUNT(Image.id).desc()).limit(5)
+        l = []
+        for user in users:
+            l.append({
+                'username': user.username,
+                'id': user.id,
+                'image_profile': user.imageProfile
+            })
+
+        return jsonify(l), 200
+
     return (jsonify(l), 200)
 
 
