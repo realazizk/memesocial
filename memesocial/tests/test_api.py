@@ -380,12 +380,6 @@ def test_search(client):
     register_user(client, 'gigi2', 'test1')
     register_user(client, 'gigi1', 'pipi1')
 
-    # test search term length < 4
-    rsp = searchIt(client, 'mo')
-    assert rsp[0] == 422
-    assert rsp[1][
-        'error'] == 'You shall send a term which length is more than 4.'
-
     # test search for persons
     rsp = searchIt(client, 'mohamed')
     assert rsp[0] == 200
