@@ -595,6 +595,8 @@ def suggest_leaders():
                       })
     # if the list is empty for some reason get users with most content
     if not l:
+        # ugly hack for working with mysql.
+        myNetwork.add(0)
         users = User.select().join(Image, JOIN_LEFT_OUTER).where(User.id != g.user['id'], ~(User.id << myNetwork)).group_by(User.username).order_by(fn.COUNT(Image.id).desc()).limit(5)
         l = []
         for user in users:
