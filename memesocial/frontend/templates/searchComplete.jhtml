@@ -8,9 +8,9 @@
 
 
     <div ng-repeat="person in persons">
-	<a href="/profile/{a person.id a}" class="mySearcLink">
+	<a ng-href="/profile/{a person.id a}" class="mySearcLink">
 	    <div class="searchContent">
-		<img alt="" src="{a person.image_profile  a}"/>
+		<img alt="" ng-src="{a person.image_profile  a}"/>
 		@{a person.username a}
 	    </div>
 	</a>

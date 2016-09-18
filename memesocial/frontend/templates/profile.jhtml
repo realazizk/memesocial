@@ -88,7 +88,7 @@
     </div>
     <div ng-controller='myController' id="myContent" class="container-fluid">
         <div id="space" style="margin-top: 50px;"></div>
-        <div infinite-scroll='meme.nextPage()' infinite-scroll-disabled='meme.busy' infinite-scroll-distance='1'>
+        <div class="row"  infinite-scroll='meme.nextPage()' infinite-scroll-disabled='meme.busy' infinite-scroll-distance='0'>
             <div ng-repeat='item in meme.items'>
                 <div class="col-md-4">
 		    <a href="{a item.content_url a}">
