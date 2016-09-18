@@ -608,14 +608,9 @@ def search():
     if not searchTerm:
         return (jsonify({'error': 'No search term given'}), 422)
 
-    if len(searchTerm) < 4:
-        return (jsonify({
-            'error': 'You shall send a term which length is more than 4.',
-        }), 422)
-
     persons = []
     for person in User.select().where(User.username.contains(
-            searchTerm)).limit(5):
+            searchTerm)).limit(40):
         persons.append({
             'username': person.username,
             'id': person.id,
