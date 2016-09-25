@@ -29,7 +29,7 @@ class Language(BaseModel):
 
 class User(BaseModel):
     id = PrimaryKeyField()
-    username = FixedCharField(100, unique=True)
+    username = FixedCharField(20, unique=True)
     password = FixedCharField(120)
 
     bio = FixedCharField(100, default='')

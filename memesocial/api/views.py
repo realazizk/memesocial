@@ -620,12 +620,17 @@ def whothefuckami():
 @api.route('/search', methods=['POST'])
 def search():
     searchTerm = request.json.get('searchTerm', False)
+    searchLimit = request.json.get('searchLimit', 40)
+    searchContentId = request.json.get('contentId', None)
     if not searchTerm:
+        # so if there is no search term but there is a contentid return people who interacted with that content
+        if searchContentId:
+            pass
         return (jsonify({'error': 'No search term given'}), 422)
 
     persons = []
     for person in User.select().where(User.username.contains(
-            searchTerm)).limit(40):
+            searchTerm)).limit(searchLimit):
         persons.append({
             'username': person.username,
             'id': person.id,

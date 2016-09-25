@@ -24,6 +24,5 @@
      $('#searchComplete').css('width', $('#search-bar').outerWidth());
  });
  
-
 </script>
 

@@ -94,15 +94,13 @@ alt="userProfileImage" src="{{ myContent.owner.image_profile }}?thumbnail"/>
 		    </div>
 		    
 		    <div class="row" id="commentBox">
-			<div class="col-xs-8">
+			<div class="col-xs-12">
 			    <div class="form-group">
-				<textarea style="resize: none;"  ng-model="commentContent"  placeholder="Say something!" class="form-control" rows="1"></textarea>
+				<textarea elastic id="commentArea" ng-change="tryAutoComplete();"  style="resize: none; overflow:hidden;" ng-keypress="postIt($event);" ng-model="commentContent"  placeholder="Say something!" class="form-control" rows="1"></textarea>
 			    </div>
 			</div>
-			<div class="col-xs-4">
-			    <button type="button" class="btn btn-primary" style="width: 100%;" ng-click="commentOnIt();">Comment!</button>
-			</div>
 		    </div>
+
 		</div>
 		
 	    </div>
@@ -110,6 +108,8 @@ alt="userProfileImage" src="{{ myContent.owner.image_profile }}?thumbnail"/>
 
     </div>
 
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.textcomplete/1.7.3/jquery.textcomplete.min.js"></script>
+    
     <script>
      $('#Comments').css('height',
 			($('#myColumnImage').css('height').replace('px', '') -
@@ -131,6 +131,36 @@ alt="userProfileImage" src="{{ myContent.owner.image_profile }}?thumbnail"/>
 		  });
 	 };
      });
+
+     $('#commentArea').textcomplete([{
+         match: /\B@(\w*)$/,
+         search: function (term, callback) {
+	     $.ajax({
+		 type: "POST",
+		 url: '/api/search',
+		 dataType: 'json',
+		 headers: {"Content-Type": "application/json"},
+		 data: JSON.stringify({
+		     searchTerm: term,
+		     searchLimit: 5,
+		     contentId: {{ myContent.id }}
+		 }),
+		 success: function (data, status) {
+		     callback(data.persons);
+		 },
+		 error: function () {
+		     callback([]);
+		 }
+	     });
+         },
+         index: 1,
+	 template: function (value, term) {
+	     return '<img style=\'margin-right:10px;height:30px;width:30px\'src=\''+value.image_profile +'\'/>' + value.username;
+	 },
+         replace: function (mention) {
+             return '@' + mention.username + ' ';
+         }}
+	]);
      
      myApp.controller('heartController', function ($scope, $http){
 	 $scope.hButt = {% if isHearted %} true {% else  %} false {% endif %};
@@ -162,12 +192,55 @@ alt="userProfileImage" src="{{ myContent.owner.image_profile }}?thumbnail"/>
 
 	 $scope.comments = [];
 
+	 pullSearchData = function (wd) {
+	     return $http.post(
+		 '/api/search',
+		 {searchTerm: wd,
+		  searchLimit: 5
+		 }
+	     )
+		  .success(function (data) {
+		      return data.persons;
+		  });
+	 };
+
+	 $scope.persons = [];
+	 
+	 $scope.tryAutoComplete = function () {
+	     // remove newlines (if something is wrong)
+	     $scope.commentContent = $scope.commentContent.replace(/\n/g, '');
+	     // detect mentions?
+
+	     // check if the last word is a mention?
+	     if ($scope.commentContent.split(' ').pop() == " ") {
+		 $scope.persons = [];
+		 return false;
+	     };
+	     try {
+		 if ($scope.commentContent.split(' ').pop() == (mention = $scope.commentContent.match(/@[a-zA-Z\.\-\_]+/g).pop())) {
+		     // complete for mention?
+		     pullSearchData(mention.replace('@','')).success(function (data) {
+			 $scope.persons = data.persons;
+		     });
+		 } else {$scope.persons = []};
+	     } catch (err) {
+		 $scope.persons = [];
+	     };
+	 };
+
+	 
 	 // get this from the backend
 	 {% for commentor in myContent.commentors %}$scope.comments.push({
 	     username: '{{ commentor.username }}',
 	     body: '{{  commentor.body}}',
 	     userid: {{ commentor.id }}
 	 });{% endfor %}
+
+	 $scope.postIt = function (keyEvent) {
+	     if (keyEvent.which === 13) {
+		 $scope.commentOnIt();
+	     };
+	 };
 	 $scope.commentOnIt  = function () {
 	     $http.post('/api/comment', {
 		 content_id: {{ myContent.id }},
@@ -214,6 +287,25 @@ alt="userProfileImage" src="{{ myContent.owner.image_profile }}?thumbnail"/>
 	     }
 	 }
      });
+
+     myApp.directive('elastic', [
+	 '$timeout',
+	 function($timeout) {
+	     return {
+		 restrict: 'A',
+		 link: function($scope, element) {
+		     $scope.initialHeight = $scope.initialHeight || element[0].style.height;
+		     var resize = function() {
+			 element[0].style.height = $scope.initialHeight;
+			 element[0].style.height = "" + element[0].scrollHeight + "px";
+		     };
+		     element.on("input change", resize);
+		     $timeout(resize, 0);
+		 }
+	     };
+	 }
+     ]);
+     
 
     </script>
 {% endblock %}
