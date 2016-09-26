@@ -242,10 +242,13 @@ def gcontent(cid):
         })
     for comm in commentors:
         d = {}
-        for user in User.select().where(User.username << utils.get_mentions(comm.body)):
-            d[user.username] = user.id
-
-        commentBody = utils.tokenize(comm.body, d)
+        mentions = utils.get_mentions(comm.body)
+        if mentions:
+            for user in User.select().where(User.username << mentions):
+                d[user.username] = user.id
+                commentBody = utils.tokenize(comm.body, d)
+        else:
+            commentBody = comm.body
         cm.append({
             'username': comm.usrId.username,
             'image_profile': comm.usrId.imageProfile,
