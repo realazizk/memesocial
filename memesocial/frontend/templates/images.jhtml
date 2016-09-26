@@ -89,7 +89,7 @@ alt="userProfileImage" src="{{ myContent.owner.image_profile }}?thumbnail"/>
 		    <div id="Comments" class="fucking_comments">
 			<div class="row" style="margin-left: 10px; margin-right: 10px" ng-repeat="comment in comments">
 			    <a href="/profile/{a comment.userid  a}">{a comment.username  a}</a>
-			    <div style="display: inline-block;" ng-bind-html="comment.body"></div>
+			    <div style="display: inline;" ng-bind-html="comment.body"></div>
 			</div>		    
 		    </div>
 		    
