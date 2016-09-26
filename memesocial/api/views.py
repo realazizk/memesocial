@@ -241,11 +241,16 @@ def gcontent(cid):
             'id': hearter.userId.id
         })
     for comm in commentors:
+        d = {}
+        for user in User.select().where(User.username << utils.get_mentions(comm.body)):
+            d[user.username] = user.id
+
+        commentBody = utils.tokenize(comm.body, d)
         cm.append({
             'username': comm.usrId.username,
             'image_profile': comm.usrId.imageProfile,
             'id': comm.usrId.id,
-            'body': comm.body,
+            'body': commentBody,
             'date': comm.date,
         })
 

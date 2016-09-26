@@ -89,7 +89,7 @@ alt="userProfileImage" src="{{ myContent.owner.image_profile }}?thumbnail"/>
 		    <div id="Comments" class="fucking_comments">
 			<div class="row" style="margin-left: 10px; margin-right: 10px" ng-repeat="comment in comments">
 			    <a href="/profile/{a comment.userid  a}">{a comment.username  a}</a>
-			    <p>{a comment.body a}</p>
+			    <div style="display: inline-block;" ng-bind-html="comment.body"></div>
 			</div>		    
 		    </div>
 		    
@@ -205,34 +205,13 @@ alt="userProfileImage" src="{{ myContent.owner.image_profile }}?thumbnail"/>
 	 };
 
 	 $scope.persons = [];
-	 
-	 $scope.tryAutoComplete = function () {
-	     // remove newlines (if something is wrong)
-	     $scope.commentContent = $scope.commentContent.replace(/\n/g, '');
-	     // detect mentions?
-
-	     // check if the last word is a mention?
-	     if ($scope.commentContent.split(' ').pop() == " ") {
-		 $scope.persons = [];
-		 return false;
-	     };
-	     try {
-		 if ($scope.commentContent.split(' ').pop() == (mention = $scope.commentContent.match(/@[a-zA-Z\.\-\_]+/g).pop())) {
-		     // complete for mention?
-		     pullSearchData(mention.replace('@','')).success(function (data) {
-			 $scope.persons = data.persons;
-		     });
-		 } else {$scope.persons = []};
-	     } catch (err) {
-		 $scope.persons = [];
-	     };
-	 };
 
 	 
-	 // get this from the backend
+	 {# get this from the backend  #}
 	 {% for commentor in myContent.commentors %}$scope.comments.push({
 	     username: '{{ commentor.username }}',
-	     body: '{{  commentor.body}}',
+	     {# snap.. this is wrong.. #}
+	     body: "{{  commentor.body}}",
 	     userid: {{ commentor.id }}
 	 });{% endfor %}
 
